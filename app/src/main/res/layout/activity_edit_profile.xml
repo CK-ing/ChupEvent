@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#F0F4FF"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Back Button and Title -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/iv_back_btn_edit_profile"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_baseline_arrow_back_24"
+                android:contentDescription="Back"
+                android:layout_gravity="start" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_gravity="center"
+                android:text="Edit Profile"
+                android:textSize="20sp"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Profile Picture -->
+        <FrameLayout
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="16dp">
+
+            <ImageView
+                android:id="@+id/profile_picture"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_baseline_person_24"
+                android:contentDescription="Profile Picture"
+                android:background="@drawable/circle_background" />
+
+            <ImageView
+                android:id="@+id/edit_profile_picture"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="4dp"
+                android:src="@drawable/ic_baseline_edit_24"
+                android:background="@drawable/circle_background"
+                android:contentDescription="Edit Profile Picture" />
+        </FrameLayout>
+
+        <!-- Name Field -->
+        <EditText
+            android:id="@+id/edit_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:padding="12dp"
+            android:hint="Yong Choon Kit"
+            android:background="@drawable/rounded_edit_text"
+            android:inputType="textPersonName"
+            android:textSize="16sp" />
+
+        <!-- Institution Field (Dropdown)
+        <Spinner
+            android:id="@+id/edit_institution"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:padding="12dp"
+            android:background="@drawable/rounded_edit_text"
+            android:entries="@array/institution_options"
+            android:spinnerMode="dropdown"/>-->
+
+        <!-- Email Field -->
+        <EditText
+            android:id="@+id/edit_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:padding="12dp"
+            android:hint="a186687@siswa.ukm.edu.my"
+            android:background="@drawable/rounded_edit_text"
+            android:inputType="textEmailAddress"
+            android:enabled="false"
+            android:textSize="16sp" />
+
+        <!-- Department Field -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/rounded_edit_text"
+            android:padding="12dp">
+
+            <EditText
+                android:id="@+id/edit_department"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Software Engineering"
+                android:inputType="text"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/edit_department_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_baseline_edit_24"
+                android:contentDescription="Edit Department" />
+        </LinearLayout>
+
+        <!-- Graduation Year Field -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/rounded_edit_text"
+            android:padding="12dp">
+
+            <EditText
+                android:id="@+id/edit_graduation_year"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="2026"
+                android:inputType="number"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/edit_graduation_year_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_baseline_calendar_month_24"
+                android:contentDescription="Select Graduation Year" />
+        </LinearLayout>
+
+        <!-- Update Button -->
+        <Button
+            android:id="@+id/btn_update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Update"
+            android:backgroundTint="#0000FF"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_margin="16dp" />
+    </LinearLayout>
+
+</ScrollView>

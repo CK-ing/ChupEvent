@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E8F0FF">
+
+    <!-- Back Button -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Back button"
+        android:src="@drawable/ic_baseline_arrow_back_24" />
+
+    <!-- Title TextView -->
+    <TextView
+        android:id="@+id/signInTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Sign In"
+        android:textSize="24sp"
+        android:textColor="#000000"
+        android:textStyle="bold" />
+
+    <!-- Email EditText -->
+    <EditText
+        android:id="@+id/emailEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@id/signInTitle"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/rounded_edit_text"
+        android:hint="johndoe@gmail.com"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textColorHint="#A6A6A6" />
+
+    <!-- Password EditText -->
+    <EditText
+        android:id="@+id/passwordEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@id/emailEditText"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/rounded_edit_text"
+        android:hint="Password"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textColorHint="#A6A6A6"
+        android:inputType="textPassword" />
+
+    <!-- Eye Icon for Password Visibility Toggle -->
+    <ImageView
+        android:id="@+id/passwordToggle"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignEnd="@id/passwordEditText"
+        android:layout_alignBottom="@id/passwordEditText"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_baseline_open_eye_24"
+        android:contentDescription="Toggle password visibility" />
+
+    <!-- Sign In Button -->
+    <Button
+        android:id="@+id/btn_sign_in"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@id/passwordEditText"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:backgroundTint="#0052CC"
+        android:text="Sign In"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold" />
+
+    <!-- Divider Text -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_sign_in"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="or"
+        android:textSize="16sp"
+        android:textColor="#A6A6A6" />
+
+    <!-- Google Sign In Button -->
+    <LinearLayout
+        android:id="@+id/googleSignInButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@+id/btn_sign_in"
+        android:layout_marginTop="48dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:orientation="horizontal"
+        android:background="@drawable/rounded_edit_text"
+        android:gravity="center"
+        android:padding="8dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="Google logo" />
+        <!--android:src="@drawable/google_icon" -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Google"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <!-- Sign Up Text -->
+    <TextView
+        android:id="@+id/signUpText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:text="No account? Sign Up"
+        android:textColor="#0052CC"
+        android:textSize="14sp" />
+
+</RelativeLayout>

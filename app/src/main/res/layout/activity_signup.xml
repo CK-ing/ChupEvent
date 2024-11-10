@@ -1,0 +1,146 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E6F0FF"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Back Button and Title -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="16dp">
+
+            <ImageView
+                android:id="@+id/iv_back_btn_signup"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_baseline_arrow_back_24" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sign Up"
+                android:textSize="24sp"
+                android:textColor="#000000"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Name Input -->
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Name"
+            android:background="@drawable/rounded_edit_text"
+            android:padding="12dp"
+            android:textColorHint="#A9A9A9"
+            android:inputType="textPersonName"
+            android:drawablePadding="8dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Email Input -->
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:background="@drawable/rounded_edit_text"
+            android:padding="12dp"
+            android:textColorHint="#A9A9A9"
+            android:inputType="textEmailAddress"
+            android:drawablePadding="8dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Password Input -->
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:background="@drawable/rounded_edit_text"
+            android:padding="12dp"
+            android:textColorHint="#A9A9A9"
+            android:inputType="textPassword"
+            android:drawableEnd="@drawable/ic_baseline_open_eye_24"
+            android:drawablePadding="8dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Confirm Password Input -->
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Confirm Password"
+            android:background="@drawable/rounded_edit_text"
+            android:padding="12dp"
+            android:textColorHint="#A9A9A9"
+            android:inputType="textPassword"
+            android:drawableEnd="@drawable/ic_baseline_open_eye_24"
+            android:drawablePadding="8dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Sign Up Button -->
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sign Up"
+            android:backgroundTint="#0000FF"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Or Divider -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="or"
+            android:textColor="#A9A9A9"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Google Sign Up Button -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edit_text"
+            android:gravity="center"
+            android:padding="12dp"
+            android:layout_marginBottom="24dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp" />
+            <!--android:src="@drawable/ic_google_logo"-->
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Google"
+            android:textColor="#000000" />
+    </LinearLayout>
+
+    <!-- Terms and Conditions -->
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Signing up means that you have read and agreed to ChupEvent User Agreement and Privacy Policy"
+            android:textColor="#A9A9A9"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Sign In Link -->
+        <TextView
+            android:id="@+id/loginLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Have an account? Sign In"
+            android:textColor="#0000FF"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</ScrollView>

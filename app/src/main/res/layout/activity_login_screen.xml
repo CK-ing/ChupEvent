@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Background ImageView for cycling images -->
+    <ImageView
+        android:id="@+id/backgroundImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+
+    <!-- Overlay content here -->
+
+    <!-- App title -->
+    <TextView
+        android:id="@+id/appTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ChupEvent"
+        android:textSize="32sp"
+        android:textColor="#FF0000"
+        android:layout_marginTop="32dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="sans-serif-medium" />
+
+    <!-- Subtitle under title -->
+    <TextView
+        android:id="@+id/subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="We are what we do"
+        android:textSize="18sp"
+        android:textColor="#FFFFFF"
+        android:layout_below="@id/appTitle"
+        android:layout_marginTop="8dp"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="sans-serif" />
+
+    <!-- Sign Up Button -->
+    <Button
+        android:id="@+id/btn_signup_login_screen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/loginLink"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
+        android:backgroundTint="#FF5733"
+        android:elevation="4dp"
+        android:fontFamily="sans-serif-medium"
+        android:paddingVertical="12dp"
+        android:text="Sign up"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp" />
+
+    <!-- Login Link -->
+    <TextView
+        android:id="@+id/loginLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="24dp"
+        android:fontFamily="sans-serif"
+        android:text="@string/login_string"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"/>
+
+</RelativeLayout>

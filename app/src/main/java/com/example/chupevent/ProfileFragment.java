@@ -1,5 +1,6 @@
 package com.example.chupevent;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -14,6 +16,8 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment {
+
+    private LinearLayout linearlayout1, linearlayout2, linearlayout3;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,6 +63,32 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        // Initialize linear layouts
+        linearlayout1 = view.findViewById(R.id.ll_edit_profile);
+        linearlayout2 = view.findViewById(R.id.ll_change_password);
+        linearlayout3 = view.findViewById(R.id.ll_log_out);
+
+        // Set OnClickListener for the first linear layout
+        linearlayout1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create an Intent to start the Activity
+                Intent intent = new Intent(getActivity(), EditProfile.class); // Replace with your Activity's name
+                startActivity(intent);
+            }
+        });
+        linearlayout3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), LoginScreen.class); // Replace with your Activity's name
+                startActivity(intent);
+            }
+        });
+
+        // ... (other linear layout click actions, if any)
+
+        return view;
     }
 }
