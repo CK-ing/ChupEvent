@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "148123029570",
+    "project_id": "chuppevent",
+    "storage_bucket": "chuppevent.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:148123029570:android:e8904b6c4f6d847e9e1ddb",
+        "android_client_info": {
+          "package_name": "com.example.chupevent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "148123029570-qu0rv6gee4r7eti2eq9m2bkjm8icd74u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chupevent",
+            "certificate_hash": "75fec2dfdb0f04b93f1010134077be6f11b0b875"
+          }
+        },
+        {
+          "client_id": "148123029570-vjkiop5832u42u4icksboetikgoqda4q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAb_HKZ0Q5EtsJP5otnatTyQdQNPyvScK8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "148123029570-vjkiop5832u42u4icksboetikgoqda4q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
