@@ -36,6 +36,7 @@
 
         <!-- Name Input -->
         <EditText
+            android:id="@+id/et_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Name"
@@ -48,6 +49,7 @@
 
         <!-- Email Input -->
         <EditText
+            android:id="@+id/et_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
@@ -60,6 +62,7 @@
 
         <!-- Password Input -->
         <EditText
+            android:id="@+id/et_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
@@ -73,6 +76,7 @@
 
         <!-- Confirm Password Input -->
         <EditText
+            android:id="@+id/et_confirm_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Confirm Password"
@@ -86,6 +90,7 @@
 
         <!-- Sign Up Button -->
         <Button
+            android:id="@+id/btn_sign_up"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Sign Up"
@@ -126,6 +131,7 @@
 
     <!-- Terms and Conditions -->
         <CheckBox
+            android:id="@+id/cb_terms"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Signing up means that you have read and agreed to ChupEvent User Agreement and Privacy Policy"

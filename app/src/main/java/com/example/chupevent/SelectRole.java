@@ -22,7 +22,7 @@ public class SelectRole extends AppCompatActivity {
         studentCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openSignUpActivity("Student");
+                openSignUpActivity("student");
             }
         });
 
@@ -30,7 +30,7 @@ public class SelectRole extends AppCompatActivity {
         organizerCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openSignUpActivity("Teacher");
+                openSignUpActivity("organizer");
             }
         });
         backbtn = findViewById(R.id.iv_back_btn_select_role);

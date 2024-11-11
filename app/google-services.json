@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "572927376351",
+    "project_id": "chupevent",
+    "storage_bucket": "chupevent.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:572927376351:android:6524af53f1a511bfab626a",
+        "android_client_info": {
+          "package_name": "com.example.chupevent"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-Cum0yRVxzklqHzW7AmSVAY7VMjhNgho"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
