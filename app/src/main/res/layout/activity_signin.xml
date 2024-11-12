@@ -59,18 +59,8 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:textColorHint="#A6A6A6"
-        android:inputType="textPassword" />
-
-    <!-- Eye Icon for Password Visibility Toggle -->
-    <ImageView
-        android:id="@+id/passwordToggle"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_alignEnd="@id/passwordEditText"
-        android:layout_alignBottom="@id/passwordEditText"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_baseline_open_eye_24"
-        android:contentDescription="Toggle password visibility" />
+        android:inputType="textPassword"
+        android:drawableEnd="@drawable/ic_baseline_open_eye_24"/>
 
     <!-- Sign In Button -->
     <Button

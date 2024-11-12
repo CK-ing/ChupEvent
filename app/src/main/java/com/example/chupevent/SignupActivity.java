@@ -6,31 +6,53 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class SignupActivity extends AppCompatActivity {
-    ImageView backbtn;
-    TextView tvSignin;
+    private static final int RC_SIGN_IN = 1001;
+    private static final String TAG = "SignupActivity";
+    private ImageView backbtn;
+    private TextView tvSignin;
     private EditText etName, etEmail, etPassword, etConfirmPassword;
     private CheckBox cbTerms;
     private Button btnSignUp;
+    private LinearLayout googlesignup;
     private DatabaseReference databaseReference;
+    private FirebaseAuth auth;
+    private FirebaseDatabase database;
+    GoogleSignInClient googleSignInClient;
     Intent intent = getIntent();
     String role;
 
@@ -51,6 +73,20 @@ public class SignupActivity extends AppCompatActivity {
         etConfirmPassword = findViewById(R.id.et_confirm_password);
         cbTerms = findViewById(R.id.cb_terms);
         btnSignUp = findViewById(R.id.btn_sign_up);
+        googlesignup = findViewById(R.id.googleSignUpButton);
+        auth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("572927376351-cdtmfmcjik992v164cqrqnjfqcc32119.apps.googleusercontent.com") // Replace with your actual client ID
+                .requestEmail()
+                .build();
+        googleSignInClient = GoogleSignIn.getClient(this, gso);
+        googlesignup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signInWithGoogle();
+            }
+        });
         // Back button functionality
         backbtn.setOnClickListener(v -> finish());
         // Sign In link functionality
@@ -82,40 +118,143 @@ public class SignupActivity extends AppCompatActivity {
             Toast.makeText(this, "Please accept the terms and conditions", Toast.LENGTH_SHORT).show();
             return;
         }
-        String userID = databaseReference.push().getKey(); // Generate a unique ID
+        // Use Firebase Authentication to create the user
+        auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Successfully created the user
+                            FirebaseUser firebaseUser = auth.getCurrentUser();
+                            if (firebaseUser != null) {
+                                String userId = firebaseUser.getUid();
+                                String role = getIntent().getStringExtra("role");
+                                // Add user data to Realtime Database
+                                Map<String, Object> userData = new HashMap<>();
+                                userData.put("name", name);
+                                userData.put("email", email);
+                                userData.put("role", role);
+                                // Add role-specific fields
+                                if ("student".equals(role)) {
+                                    userData.put("registeredEvents", ""); // Placeholder for registered events
+                                } else if ("organizer".equals(role)) {
+                                    userData.put("organizedEvents", ""); // Placeholder for organized events
+                                } else if ("administrator".equals(role)) {
+                                    userData.put("approvedEvents", ""); // Placeholder for approved events
+                                }
+                                // Store user data in Firebase Realtime Database
+                                databaseReference.child(userId).setValue(userData)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Toast.makeText(SignupActivity.this, "Sign Up Successful", Toast.LENGTH_SHORT).show();
+                                                    // Navigate to the main activity
+                                                    Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                } else {
+                                                    Toast.makeText(SignupActivity.this, "Failed to save user data. Please try again.", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                            }
+                        } else {
+                            // Sign-up failed
+                            Toast.makeText(SignupActivity.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
 
-        Map<String, Object> userData = new HashMap<>();
-        userData.put("userID", userID);
-        userData.put("name", name);
-        userData.put("email", email);
-        userData.put("role", role);
+    private void signInWithGoogle() {
+        Intent signInIntent = googleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
 
-        // Add specific fields based on role
-        if (role.equals("student")) {
-            userData.put("studentID", userID);
-            userData.put("registeredEvents", ""); // Placeholder for registered events
-        } else if (role.equals("organizer")) {
-            userData.put("organizerID", userID);
-            userData.put("organizedEvents", ""); // Placeholder for organized events
-        } else if (role.equals("administrator")) {
-            userData.put("administratorID", userID);
-            userData.put("approvedEvents", ""); // Placeholder for approved events
-        }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        // Store user data in Firebase
-        databaseReference.child(userID).setValue(userData).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(SignupActivity.this, "Sign Up Successful", Toast.LENGTH_SHORT).show();
-                    // Navigate to next activity or home screen
-                    Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    Toast.makeText(SignupActivity.this, "Failed to sign up. Please try again.", Toast.LENGTH_SHORT).show();
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                // Google Sign-In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                if (account != null) {
+                    firebaseAuthWithGoogle(account);
                 }
+            } catch (ApiException e) {
+                Log.w(TAG, "Google sign-in failed", e);
+                Toast.makeText(SignupActivity.this, "Google sign-in failed.", Toast.LENGTH_SHORT).show();
             }
-        });
+        }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+
+        // First, check if this Google account email already exists in the database
+        String email = acct.getEmail();
+        database.getReference("Users")
+                .orderByChild("email")
+                .equalTo(email)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            // Email already exists in the database, don't create an account in Firebase Authentication
+                            Toast.makeText(SignupActivity.this, "Account with this Google account already exists.", Toast.LENGTH_SHORT).show();
+                            googleSignInClient.signOut();
+                        } else {
+                            // Email does not exist in the database, proceed to sign in and save user data
+                            auth.signInWithCredential(credential)
+                                    .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            if (task.isSuccessful()) {
+                                                // Sign-in success, proceed to save user data
+                                                FirebaseUser user = auth.getCurrentUser();
+                                                if (user != null) {
+                                                    // Prepare user data
+                                                    HashMap<String, Object> map = new HashMap<>();
+                                                    role = getIntent().getStringExtra("role");
+                                                    map.put("name", user.getDisplayName());
+                                                    map.put("email", user.getEmail());
+                                                    map.put("role", role);
+
+                                                    // Save data to Firebase Realtime Database
+                                                    database.getReference().child("Users").child(user.getUid())
+                                                            .setValue(map)
+                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        Toast.makeText(SignupActivity.this, "Sign in successful!", Toast.LENGTH_SHORT).show();
+                                                                        startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                                                                        finish();
+                                                                    } else {
+                                                                        // Database save failed, remove account from Firebase Authentication
+                                                                        user.delete();
+                                                                        Toast.makeText(SignupActivity.this, "Failed to save user data.", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                }
+                                                            });
+                                                }
+                                            } else {
+                                                // Sign-in failed, show error message
+                                                Log.w(TAG, "signUpWithCredential:failure", task.getException());
+                                                Toast.makeText(SignupActivity.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(SignupActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

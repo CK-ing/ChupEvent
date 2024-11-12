@@ -15,14 +15,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class LoginScreen extends AppCompatActivity {
 
     private ImageView backgroundImageView;
     private int[] images = {R.drawable.loginscreen1, R.drawable.loginscreen2, R.drawable.loginscreen3}; // Replace with your image resources
     private int currentIndex = 0;
     private Handler handler = new Handler();
-    Button signupbutton;
-    TextView signintextview;
+    private Button signupbutton;
+    private TextView signintextview;
+
 
     private Runnable runnable = new Runnable() {
         @Override
