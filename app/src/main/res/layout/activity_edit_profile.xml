@@ -100,8 +100,9 @@
             android:enabled="false"
             android:textSize="16sp" />
 
-        <!-- Department Field
+        <!-- Birth Date Field-->
         <LinearLayout
+            android:id="@+id/ll_birth_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -110,23 +111,24 @@
             android:padding="12dp">
 
             <EditText
-                android:id="@+id/edit_department"
+                android:id="@+id/edit_birth_date"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Software Engineering"
-                android:inputType="text"
-                android:textSize="16sp" />
+                android:hint="Pick Birth Date"
+                android:inputType="number"
+                android:textSize="16sp"
+                android:enabled="false"/>
 
             <ImageView
-                android:id="@+id/edit_department_icon"
+                android:id="@+id/edit_birth_date_icon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_baseline_edit_24"
-                android:contentDescription="Edit Department" />
-        </LinearLayout>-->
+                android:src="@drawable/ic_baseline_calendar_month_24"
+                android:contentDescription="Select Birth Date" />
+        </LinearLayout>
 
-        <!-- Graduation Year Field
+        <!-- Department Field-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -136,21 +138,23 @@
             android:padding="12dp">
 
             <EditText
-                android:id="@+id/edit_graduation_year"
+                android:id="@+id/edit_contact"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="2026"
+                android:hint="Enter Contact Number"
                 android:inputType="number"
                 android:textSize="16sp" />
 
             <ImageView
-                android:id="@+id/edit_graduation_year_icon"
+                android:id="@+id/edit_contact_icon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_baseline_calendar_month_24"
-                android:contentDescription="Select Graduation Year" />
-        </LinearLayout>-->
+                android:src="@drawable/ic_baseline_edit_24"
+                android:contentDescription="Edit Contact" />
+        </LinearLayout>
+
+
 
         <!-- Update Button -->
         <Button

@@ -143,7 +143,7 @@ public class SignupActivity extends AppCompatActivity {
                                     userData.put("approvedEvents", new HashMap<>()); // Placeholder for approved events
                                 }
                                 // Store user data in Firebase Realtime Database
-                                Log.d(TAG, "User Data: " + userData.toString());
+
                                 databaseReference.child(userId).setValue(userData)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
