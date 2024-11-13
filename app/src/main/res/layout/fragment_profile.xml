@@ -6,17 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F0F4FF"
     android:padding="16dp">
-
-    <!-- Back Button -->
-    <ImageView
-        android:id="@+id/iv_back_btn_profile"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_gravity="start"
-        android:src="@drawable/ic_baseline_arrow_back_24"
-        android:contentDescription="Back" />
 
     <!-- Title -->
     <TextView

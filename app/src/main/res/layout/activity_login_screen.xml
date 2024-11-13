@@ -19,9 +19,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="ChupEvent"
-        android:textSize="32sp"
+        android:textSize="48sp"
         android:textColor="#FF0000"
         android:layout_marginTop="32dp"
+        android:textStyle="bold"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:fontFamily="sans-serif-medium" />
@@ -37,6 +38,7 @@
         android:layout_below="@id/appTitle"
         android:layout_marginTop="8dp"
         android:layout_centerHorizontal="true"
+        android:textStyle="bold"
         android:fontFamily="sans-serif" />
 
     <!-- Sign Up Button -->

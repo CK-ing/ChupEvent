@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,6 +48,7 @@ public class SigninActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseDatabase database;
     GoogleSignInClient googleSignInClient;
+    private boolean passwordVisible = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +89,35 @@ public class SigninActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        passwordEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_RIGHT = 2;
+
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    // Check if the touch is within the bounds of the drawableEnd
+                    if (event.getRawX() >= (passwordEditText.getRight() - passwordEditText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        // Toggle password visibility
+                        if (passwordVisible) {
+                            // Hide Password
+                            passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                            passwordVisible = false;
+                            passwordEditText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_password_24, 0);
+                        } else {
+                            // Show Password
+                            passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                            passwordVisible = true;
+                            passwordEditText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_open_eye_24, 0);
+                        }
+                        // Move the cursor to the end of the text
+                        passwordEditText.setSelection(passwordEditText.getText().length());
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
     }
     private void signInWithGoogle() {
         Intent signInIntent = googleSignInClient.getSignInIntent();

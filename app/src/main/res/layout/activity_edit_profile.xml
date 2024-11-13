@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#F0F4FF"
     android:padding="16dp">
 
     <LinearLayout
@@ -72,7 +71,7 @@
             android:layout_marginTop="16dp"
             android:padding="12dp"
             android:hint="Name"
-            android:background="@drawable/rounded_edit_text"
+            android:background="@drawable/rounded_edit_text_blue"
             android:inputType="textPersonName"
             android:textSize="16sp" />
 
@@ -95,7 +94,7 @@
             android:layout_marginTop="12dp"
             android:padding="12dp"
             android:hint="E-mail"
-            android:background="@drawable/rounded_edit_text"
+            android:background="@drawable/rounded_edit_text_blue"
             android:inputType="textEmailAddress"
             android:enabled="false"
             android:textSize="16sp" />
@@ -107,7 +106,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="12dp"
-            android:background="@drawable/rounded_edit_text"
+            android:background="@drawable/rounded_edit_text_blue"
             android:padding="12dp">
 
             <EditText
@@ -134,7 +133,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="12dp"
-            android:background="@drawable/rounded_edit_text"
+            android:background="@drawable/rounded_edit_text_blue"
             android:padding="12dp">
 
             <EditText

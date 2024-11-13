@@ -1,7 +1,6 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E6F0FF"
     android:padding="16dp">
 
     <LinearLayout
@@ -31,6 +30,7 @@
                 android:text="Sign Up"
                 android:textSize="24sp"
                 android:textColor="#000000"
+                android:textStyle="bold"
                 android:gravity="center" />
         </LinearLayout>
 
@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Name"
-            android:background="@drawable/rounded_edit_text"
+            android:background="@drawable/rounded_edit_text_blue"
             android:padding="12dp"
             android:textColorHint="#A9A9A9"
             android:inputType="textPersonName"
@@ -53,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
-            android:background="@drawable/rounded_edit_text"
+            android:background="@drawable/rounded_edit_text_blue"
             android:padding="12dp"
             android:textColorHint="#A9A9A9"
             android:inputType="textEmailAddress"
@@ -66,11 +66,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
-            android:background="@drawable/rounded_edit_text"
+            android:background="@drawable/rounded_edit_text_blue"
             android:padding="12dp"
             android:textColorHint="#A9A9A9"
             android:inputType="textPassword"
-            android:drawableEnd="@drawable/ic_baseline_open_eye_24"
+            android:drawableEnd="@drawable/ic_baseline_password_24"
             android:drawablePadding="8dp"
             android:layout_marginBottom="12dp" />
 
@@ -80,11 +80,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Confirm Password"
-            android:background="@drawable/rounded_edit_text"
+            android:background="@drawable/rounded_edit_text_blue"
             android:padding="12dp"
             android:textColorHint="#A9A9A9"
             android:inputType="textPassword"
-            android:drawableEnd="@drawable/ic_baseline_open_eye_24"
+            android:drawableEnd="@drawable/ic_baseline_password_24"
             android:drawablePadding="8dp"
             android:layout_marginBottom="24dp" />
 
@@ -111,7 +111,7 @@
             android:id="@+id/googleSignUpButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_edit_text"
+            android:background="@drawable/rounded_edit_text_white"
             android:gravity="center"
             android:padding="12dp"
             android:layout_marginBottom="24dp">

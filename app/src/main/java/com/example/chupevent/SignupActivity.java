@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -52,6 +54,8 @@ public class SignupActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private FirebaseAuth auth;
     private FirebaseDatabase database;
+    private boolean isPasswordVisible = false;
+    private boolean isConfirmPasswordVisible = false;
     GoogleSignInClient googleSignInClient;
     Intent intent = getIntent();
     String role;
@@ -95,6 +99,42 @@ public class SignupActivity extends AppCompatActivity {
             startActivity(intent);
         });
         btnSignUp.setOnClickListener(v -> signUpUser());
+
+        etPassword.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (etPassword.getRight() - etPassword.getCompoundDrawables()[2].getBounds().width())) {
+                    // Toggle password visibility
+                    isPasswordVisible = !isPasswordVisible;
+                    etPassword.setInputType(isPasswordVisible ?
+                            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD :
+                            InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    etPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                            isPasswordVisible ? R.drawable.ic_baseline_open_eye_24 : R.drawable.ic_baseline_password_24, 0);
+                    // Move the cursor to the end
+                    etPassword.setSelection(etPassword.getText().length());
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        etConfirmPassword.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (etConfirmPassword.getRight() - etConfirmPassword.getCompoundDrawables()[2].getBounds().width())) {
+                    // Toggle confirm password visibility
+                    isConfirmPasswordVisible = !isConfirmPasswordVisible;
+                    etConfirmPassword.setInputType(isConfirmPasswordVisible ?
+                            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD :
+                            InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    etConfirmPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                            isConfirmPasswordVisible ? R.drawable.ic_baseline_open_eye_24 : R.drawable.ic_baseline_password_24, 0);
+                    // Move the cursor to the end
+                    etConfirmPassword.setSelection(etConfirmPassword.getText().length());
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 
     private void signUpUser() {

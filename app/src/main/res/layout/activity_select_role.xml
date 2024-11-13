@@ -28,6 +28,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Sign Up"
+            android:textStyle="bold"
             android:textColor="#000000"
             android:textSize="24sp" />
     </LinearLayout>
