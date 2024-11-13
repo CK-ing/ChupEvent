@@ -84,7 +84,7 @@ public class SignupActivity extends AppCompatActivity {
         googlesignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signInWithGoogle();
+                signUpWithGoogle();
             }
         });
         // Back button functionality
@@ -128,7 +128,6 @@ public class SignupActivity extends AppCompatActivity {
                             FirebaseUser firebaseUser = auth.getCurrentUser();
                             if (firebaseUser != null) {
                                 String userId = firebaseUser.getUid();
-                                String role = getIntent().getStringExtra("role");
                                 // Add user data to Realtime Database
                                 Map<String, Object> userData = new HashMap<>();
                                 userData.put("name", name);
@@ -136,13 +135,15 @@ public class SignupActivity extends AppCompatActivity {
                                 userData.put("role", role);
                                 // Add role-specific fields
                                 if ("student".equals(role)) {
-                                    userData.put("registeredEvents", ""); // Placeholder for registered events
+                                    userData.put("registeredEvents", new HashMap<>());
+                                    userData.put("pastEvents", new HashMap<>());// Placeholder for registered events
                                 } else if ("organizer".equals(role)) {
-                                    userData.put("organizedEvents", ""); // Placeholder for organized events
+                                    userData.put("organizedEvents", new HashMap<>()); // Placeholder for organized events
                                 } else if ("administrator".equals(role)) {
-                                    userData.put("approvedEvents", ""); // Placeholder for approved events
+                                    userData.put("approvedEvents", new HashMap<>()); // Placeholder for approved events
                                 }
                                 // Store user data in Firebase Realtime Database
+                                Log.d(TAG, "User Data: " + userData.toString());
                                 databaseReference.child(userId).setValue(userData)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
@@ -167,7 +168,7 @@ public class SignupActivity extends AppCompatActivity {
                 });
     }
 
-    private void signInWithGoogle() {
+    private void signUpWithGoogle() {
         Intent signInIntent = googleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -218,7 +219,6 @@ public class SignupActivity extends AppCompatActivity {
                                                 if (user != null) {
                                                     // Prepare user data
                                                     HashMap<String, Object> map = new HashMap<>();
-                                                    role = getIntent().getStringExtra("role");
                                                     map.put("name", user.getDisplayName());
                                                     map.put("email", user.getEmail());
                                                     map.put("role", role);

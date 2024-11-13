@@ -71,7 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:padding="12dp"
-            android:hint="Yong Choon Kit"
+            android:hint="Name"
             android:background="@drawable/rounded_edit_text"
             android:inputType="textPersonName"
             android:textSize="16sp" />
@@ -94,13 +94,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:padding="12dp"
-            android:hint="a186687@siswa.ukm.edu.my"
+            android:hint="E-mail"
             android:background="@drawable/rounded_edit_text"
             android:inputType="textEmailAddress"
             android:enabled="false"
             android:textSize="16sp" />
 
-        <!-- Department Field -->
+        <!-- Department Field
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -124,9 +124,9 @@
                 android:layout_height="24dp"
                 android:src="@drawable/ic_baseline_edit_24"
                 android:contentDescription="Edit Department" />
-        </LinearLayout>
+        </LinearLayout>-->
 
-        <!-- Graduation Year Field -->
+        <!-- Graduation Year Field
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -150,7 +150,7 @@
                 android:layout_height="24dp"
                 android:src="@drawable/ic_baseline_calendar_month_24"
                 android:contentDescription="Select Graduation Year" />
-        </LinearLayout>
+        </LinearLayout>-->
 
         <!-- Update Button -->
         <Button
