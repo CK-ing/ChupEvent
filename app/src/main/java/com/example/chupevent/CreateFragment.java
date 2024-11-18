@@ -50,7 +50,7 @@ public class CreateFragment extends Fragment {
     private EditText etEventTitle, etEventDetails, etSeats, etStartDate, etEndDate, etStartTime, etEndTime, etLocation;
     private ImageView addPhoto, ivThumbnail;
     private Button btnCreateEvent;
-    private Uri photoUri;
+    private Uri photoUri, tempUri;
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
     private OrganizerMainActivity organizerMainActivity;
@@ -125,18 +125,18 @@ public class CreateFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && data != null && data.getData() != null) {
-            photoUri = data.getData();
+            tempUri = data.getData();
             try {
                 // Validate file size
-                long fileSizeInBytes = getFileSize(photoUri);
+                long fileSizeInBytes = getFileSize(tempUri);
                 double fileSizeInMB = fileSizeInBytes / (1024.0 * 1024.0);
                 if (fileSizeInMB > 5.0) {
                     // Notify the user and clear the invalid selection
                     Toast.makeText(getContext(), "Photo size exceeds 5 MB. Please choose a smaller file.", Toast.LENGTH_SHORT).show();
-                    photoUri = null;
-                    ivThumbnail.setImageResource(0); // Reset the ImageView
+                    tempUri = null;
                 } else {
                     // Set the image in the thumbnail
+                    photoUri = tempUri;
                     ivThumbnail.setImageURI(photoUri);
                 }
             } catch (Exception e) {
@@ -145,7 +145,6 @@ public class CreateFragment extends Fragment {
                 ivThumbnail.setImageResource(0); // Reset the ImageView
             }
         }
-            ivThumbnail.setImageURI(photoUri);
         }
 
     private void openDatePicker(EditText editText) {
@@ -240,10 +239,10 @@ public class CreateFragment extends Fragment {
     private void uploadEventToFirebase(String title, String details, String seats, String startDate, String endDate, String startTime, String endTime, String location) {
         setInputFieldsEnabled(false);
         btnCreateEvent.setText("Creating...");
-        StorageReference fileReference = storageReference.child(System.currentTimeMillis() + ".jpg");
+        String eventId = databaseReference.push().getKey();
+        StorageReference fileReference = storageReference.child(eventId + ".jpg");
         fileReference.putFile(photoUri).addOnSuccessListener(taskSnapshot -> fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
             String photoUrl = uri.toString();
-            String eventId = databaseReference.push().getKey();
             if(eventId == null){
                 Toast.makeText(getContext(), "Failed to generate event ID", Toast.LENGTH_SHORT).show();
                 setInputFieldsEnabled(true);
