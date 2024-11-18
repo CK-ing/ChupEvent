@@ -133,19 +133,38 @@ public class SigninActivity extends AppCompatActivity {
         }
 
         auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign-in successful
-                            Toast.makeText(SigninActivity.this, "Sign in successful!", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(SigninActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(SigninActivity.this, "Wrong email or password", Toast.LENGTH_SHORT).show();
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign-in successful, retrieve user role from Firebase
+                        String userId = auth.getCurrentUser().getUid();
+                        database.getReference("Users").child(userId).child("role")
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if (snapshot.exists()) {
+                                            String role = snapshot.getValue(String.class);
+                                            if ("student".equalsIgnoreCase(role)) {
+                                                // Navigate to Student MainActivity
+                                                Intent intent = new Intent(SigninActivity.this, MainActivity.class);
+                                                startActivity(intent);
+                                            } else if ("organizer".equalsIgnoreCase(role)) {
+                                                // Navigate to Organizer OrganizerActivity
+                                                Intent intent = new Intent(SigninActivity.this, OrganizerMainActivity.class);
+                                                startActivity(intent);
+                                            }
+                                            finish(); // Close SigninActivity
+                                        } else {
+                                            Toast.makeText(SigninActivity.this, "User role not found", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        Toast.makeText(SigninActivity.this, "Failed to retrieve role. Try again later.", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    } else {
+                        Toast.makeText(SigninActivity.this, "Wrong email or password", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -185,11 +204,32 @@ public class SigninActivity extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<AuthResult> task) {
                                             if (task.isSuccessful()) {
-                                                // Sign in success, update UI with the signed-in user's information
-                                                Toast.makeText(SigninActivity.this, "Sign in successful!", Toast.LENGTH_SHORT).show();
-                                                Intent intent = new Intent(SigninActivity.this, MainActivity.class);
-                                                startActivity(intent);
-                                                finish();
+                                                // Sign-in successful, retrieve user role
+                                                String userId = auth.getCurrentUser().getUid();
+                                                database.getReference("Users").child(userId).child("role")
+                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                if (snapshot.exists()) {
+                                                                    String role = snapshot.getValue(String.class);
+                                                                    Intent intent;
+                                                                    if ("student".equalsIgnoreCase(role)) {
+                                                                        intent = new Intent(SigninActivity.this, MainActivity.class);
+                                                                    } else {
+                                                                        intent = new Intent(SigninActivity.this, OrganizerMainActivity.class);
+                                                                    }
+                                                                    startActivity(intent);
+                                                                    finish();
+                                                                } else {
+                                                                    Toast.makeText(SigninActivity.this, "User role not found", Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                                Toast.makeText(SigninActivity.this, "Failed to retrieve role. Try again later.", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
                                             } else {
                                                 // Sign-in failed
                                                 Log.w(TAG, "signInWithCredential:failure", task.getException());

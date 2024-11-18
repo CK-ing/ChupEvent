@@ -189,11 +189,24 @@ public class SignupActivity extends AppCompatActivity {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
-                                                    Toast.makeText(SignupActivity.this, "Sign Up Successful", Toast.LENGTH_SHORT).show();
-                                                    // Navigate to the main activity
-                                                    Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-                                                    startActivity(intent);
-                                                    finish();
+                                                    if ("student".equalsIgnoreCase(role)){
+                                                        Toast.makeText(SignupActivity.this, "Sign Up Successful", Toast.LENGTH_SHORT).show();
+                                                        // Navigate to the main activity
+                                                        Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
+                                                    else if("organizer".equalsIgnoreCase(role)){
+                                                        Toast.makeText(SignupActivity.this, "Sign Up Successful", Toast.LENGTH_SHORT).show();
+                                                        // Navigate to the main activity
+                                                        Intent intent = new Intent(SignupActivity.this, OrganizerMainActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
+                                                    else {
+                                                        Toast.makeText(SignupActivity.this, "Role not found", Toast.LENGTH_SHORT).show();
+                                                        finish();
+                                                    }
                                                 } else {
                                                     Toast.makeText(SignupActivity.this, "Failed to save user data. Please try again.", Toast.LENGTH_SHORT).show();
                                                 }
@@ -270,9 +283,19 @@ public class SignupActivity extends AppCompatActivity {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {
                                                                     if (task.isSuccessful()) {
-                                                                        Toast.makeText(SignupActivity.this, "Sign in successful!", Toast.LENGTH_SHORT).show();
-                                                                        startActivity(new Intent(SignupActivity.this, MainActivity.class));
-                                                                        finish();
+                                                                        if ("student".equalsIgnoreCase(role)){
+                                                                            Toast.makeText(SignupActivity.this, "Sign up successful!", Toast.LENGTH_SHORT).show();
+                                                                            startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                                                                            finish();
+                                                                        } else if ("organizer".equalsIgnoreCase(role)) {
+                                                                            Toast.makeText(SignupActivity.this, "Sign up successful!", Toast.LENGTH_SHORT).show();
+                                                                            startActivity(new Intent(SignupActivity.this, OrganizerMainActivity.class));
+                                                                            finish();
+                                                                        }else {
+                                                                            Toast.makeText(SignupActivity.this, "Role not found!", Toast.LENGTH_SHORT).show();
+                                                                            finish();
+                                                                        }
+
                                                                     } else {
                                                                         // Database save failed, remove account from Firebase Authentication
                                                                         user.delete();
