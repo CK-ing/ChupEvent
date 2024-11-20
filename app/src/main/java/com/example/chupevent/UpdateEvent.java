@@ -37,7 +37,7 @@ public class UpdateEvent extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int MAX_IMAGE_SIZE_MB = 5;
     private EditText etEventTitle, etEventDetails, etSeats, etStartDate, etEndDate, etStartTime, etEndTime, etLocation;
-    private ImageView ivThumbnail, addPhoto;
+    private ImageView ivBackBtn, ivThumbnail, addPhoto;
     private Button btnUpdateEvent, btnDeleteEvent;
     private String eventId, oldPhotoUrl;
     private Uri newPhotoUri = null;
@@ -47,6 +47,7 @@ public class UpdateEvent extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_event);
         // Initialize UI components
+        ivBackBtn = findViewById(R.id.ivBackButton);
         etEventTitle = findViewById(R.id.etEventTitle);
         etEventDetails = findViewById(R.id.etEventDetails);
         etSeats = findViewById(R.id.etSeats);
@@ -59,6 +60,7 @@ public class UpdateEvent extends AppCompatActivity {
         addPhoto = findViewById(R.id.add_photo);
         btnUpdateEvent = findViewById(R.id.btnUpdateEvent);
         btnDeleteEvent = findViewById(R.id.btnDeleteEvent);
+        ivBackBtn.setOnClickListener(v -> finish());
         // Get the eventId passed from the intent
         eventId = getIntent().getStringExtra("eventId");
         // Load event details

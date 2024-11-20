@@ -260,6 +260,7 @@ public class CreateFragment extends Fragment {
             eventMap.put("endTime", endTime);
             eventMap.put("location", location);
             eventMap.put("photoUrl", photoUrl);
+            eventMap.put("status", "Pending");
 
                     // Upload the event details to Firebase Realtime Database
                     databaseReference.child(eventId).setValue(eventMap)

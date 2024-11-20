@@ -11,6 +11,7 @@ public class Event {
     private String startTime;
     private String endTime;
     private String location;
+    private String status;
 
     // Default constructor required for Firebase
     public Event() {
@@ -18,7 +19,7 @@ public class Event {
 
     // Constructor with all attributes
     public Event(String eventId, String title, String photoUrl, String details, int seats,
-                 String startDate, String endDate, String startTime, String endTime, String location) {
+                 String startDate, String endDate, String startTime, String endTime, String location,String status) {
         this.eventId = eventId;
         this.title = title;
         this.photoUrl = photoUrl;
@@ -29,6 +30,7 @@ public class Event {
         this.startTime = startTime;
         this.endTime = endTime;
         this.location = location;
+        this.status = status;
     }
 
     // Getters and Setters
@@ -110,5 +112,13 @@ public class Event {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

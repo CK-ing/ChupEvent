@@ -37,6 +37,18 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         Event event = filteredList.get(position);
         holder.title.setText(event.getTitle());
+
+        // Set the color based on the status
+        if (event.getStatus().equals("Pending")) {
+            holder.status.setTextColor(holder.status.getContext().getResources().getColor(R.color.dark_yellow));
+        } else if (event.getStatus().equals("Approved")) {
+            holder.status.setTextColor(holder.status.getContext().getResources().getColor(R.color.light_green));
+        } else if (event.getStatus().equals("Rejected")) {
+            holder.status.setTextColor(holder.status.getContext().getResources().getColor(R.color.bright_red));
+        } else {
+            holder.status.setTextColor(holder.status.getContext().getResources().getColor(R.color.default_text_color));
+        }
+        holder.status.setText(event.getStatus());
         Glide.with(holder.image.getContext())
                 .load(event.getPhotoUrl())
                 .placeholder(R.drawable.ic_baseline_error_24)
@@ -88,12 +100,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     static class EventViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
-        TextView title;
+        TextView title, status;
 
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.eventImage);
             title = itemView.findViewById(R.id.eventTitle);
+            status = itemView.findViewById(R.id.eventStatus);
         }
     }
     public void updateEventList(List<Event> newEventList) {

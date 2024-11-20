@@ -1,8 +1,5 @@
 package com.example.chupevent;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -16,6 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -23,19 +23,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.HashMap;
-import java.util.Objects;
 
 public class SigninActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1001;
@@ -151,6 +146,10 @@ public class SigninActivity extends AppCompatActivity {
                                                 // Navigate to Organizer OrganizerActivity
                                                 Intent intent = new Intent(SigninActivity.this, OrganizerMainActivity.class);
                                                 startActivity(intent);
+                                            } else if ("admin".equalsIgnoreCase(role)) {
+                                                // Navigate to Organizer OrganizerActivity
+                                                Intent intent = new Intent(SigninActivity.this, AdminMainActivity.class);
+                                                startActivity(intent);
                                             }
                                             finish(); // Close SigninActivity
                                         } else {
@@ -215,8 +214,10 @@ public class SigninActivity extends AppCompatActivity {
                                                                     Intent intent;
                                                                     if ("student".equalsIgnoreCase(role)) {
                                                                         intent = new Intent(SigninActivity.this, MainActivity.class);
-                                                                    } else {
+                                                                    } else if ("organizer".equalsIgnoreCase(role)){
                                                                         intent = new Intent(SigninActivity.this, OrganizerMainActivity.class);
+                                                                    }else{
+                                                                        intent = new Intent(SigninActivity.this, AdminMainActivity.class);
                                                                     }
                                                                     startActivity(intent);
                                                                     finish();

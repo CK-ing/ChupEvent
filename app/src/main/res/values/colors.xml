@@ -3,4 +3,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="orange">#FF0000</color>
+    <color name="dark_yellow">#FFC107</color> <!-- Dark Yellow -->
+    <color name="light_green">#AAFF00</color> <!-- Light Green -->
+    <color name="bright_red">#EE4B2B</color> <!-- Bright Red -->
+    <color name="default_text_color">#000000</color> <!-- Default Black -->
 </resources>
