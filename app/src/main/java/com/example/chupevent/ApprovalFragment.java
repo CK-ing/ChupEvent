@@ -4,60 +4,145 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ApprovalFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+
 public class ApprovalFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private RecyclerView recyclerView;
+    private ApprovalAdapter approvalAdapter;
+    private ImageView filterImageView, refreshImageView;
+    private DatabaseReference eventRef, userRef;
+    private List<Event> eventList;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public ApprovalFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ApprovalFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ApprovalFragment newInstance(String param1, String param2) {
-        ApprovalFragment fragment = new ApprovalFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_approval, container, false);
+
+        recyclerView = view.findViewById(R.id.approvalRecyclerView);
+        filterImageView = view.findViewById(R.id.filterImageView);
+        refreshImageView = view.findViewById(R.id.refreshImageView);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        eventList = new ArrayList<>();
+        approvalAdapter = new ApprovalAdapter(getContext(), eventList);
+        recyclerView.setAdapter(approvalAdapter);
+
+        eventRef = FirebaseDatabase.getInstance().getReference("Events");
+        userRef = FirebaseDatabase.getInstance().getReference("Users");
+
+        fetchPendingEvents();
+        setupFilterButton();
+        setupRefreshButton();
+
+        return view;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_approval, container, false);
+    private void fetchPendingEvents() {
+        eventRef.orderByChild("status").equalTo("Pending")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        eventList.clear();
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            Event event = dataSnapshot.getValue(Event.class);
+                            if (event != null) {
+                                fetchOrganizerDetails(event);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // Handle error
+                    }
+                });
+    }
+
+    private void fetchOrganizerDetails(Event event) {
+        userRef.child(event.getOrganizerId()).child("name")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String organizerName = snapshot.getValue(String.class);
+                        event.setOrganizerId(organizerName != null ? organizerName : "Unknown Organizer");
+                        eventList.add(event);
+                        approvalAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // Handle error
+                    }
+                });
+    }
+
+    private void setupFilterButton() {
+        filterImageView.setOnClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(getContext(), filterImageView);
+            popupMenu.getMenuInflater().inflate(R.menu.filter_menu, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.sort_by_title) {
+                    // Sort alphabetically by title
+                    Collections.sort(eventList, Comparator.comparing(Event::getTitle));
+                } else if (item.getItemId() == R.id.sort_by_earliest_date) {
+                    // Sort by earliest date
+                    Collections.sort(eventList, (e1, e2) -> {
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                        try {
+                            Date date1 = sdf.parse(e1.getStartDate());
+                            Date date2 = sdf.parse(e2.getStartDate());
+                            return date1.compareTo(date2); // Earliest date first
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                            return 0;
+                        }
+                    });
+                } else if (item.getItemId() == R.id.sort_by_latest_date) {
+                    // Sort by latest date
+                    Collections.sort(eventList, (e1, e2) -> {
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                        try {
+                            Date date1 = sdf.parse(e1.getStartDate());
+                            Date date2 = sdf.parse(e2.getStartDate());
+                            return date2.compareTo(date1); // Latest date first
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                            return 0;
+                        }
+                    });
+                }
+                approvalAdapter.notifyDataSetChanged(); // Update the RecyclerView
+                return true;
+            });
+            popupMenu.show();
+        });
+    }
+    private void setupRefreshButton() {
+        refreshImageView.setOnClickListener(v -> {
+            fetchPendingEvents(); // Refresh data from Firebase
+        });
     }
 }
