@@ -122,4 +122,3 @@ public class Event {
         this.status = status;
     }
 }
-

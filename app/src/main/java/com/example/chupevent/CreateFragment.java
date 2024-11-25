@@ -240,6 +240,7 @@ public class CreateFragment extends Fragment {
         setInputFieldsEnabled(false);
         btnCreateEvent.setText("Creating...");
         String eventId = databaseReference.push().getKey();
+        String organizerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         StorageReference fileReference = storageReference.child(eventId + ".jpg");
         fileReference.putFile(photoUri).addOnSuccessListener(taskSnapshot -> fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
             String photoUrl = uri.toString();
@@ -261,6 +262,7 @@ public class CreateFragment extends Fragment {
             eventMap.put("location", location);
             eventMap.put("photoUrl", photoUrl);
             eventMap.put("status", "Pending");
+            eventMap.put("organizerId", organizerId);
 
                     // Upload the event details to Firebase Realtime Database
                     databaseReference.child(eventId).setValue(eventMap)

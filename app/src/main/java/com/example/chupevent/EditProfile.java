@@ -1,19 +1,21 @@
 package com.example.chupevent;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
+import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,17 +31,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EditProfile extends AppCompatActivity {
-    private ImageView backbtn;
+    private static final int PICK_IMAGE_REQUEST = 100;
+    private ImageView backbtn, profilePicture, editProfilePicture;
     private EditText etName, etEmail, etContact, etBirthDate;;
     private Button btnUpdate;
     private LinearLayout llBirthYear;
     private DatabaseReference userReference;
     private FirebaseUser currentUser;
+    private StorageReference storageReference;
+    private Uri profileImageUri;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
         backbtn = findViewById(R.id.iv_back_btn_edit_profile);
+        profilePicture = findViewById(R.id.profile_picture);
+        editProfilePicture = findViewById(R.id.edit_profile_picture);
         etName = findViewById(R.id.edit_name);
         etEmail = findViewById(R.id.edit_email);
         etContact = findViewById(R.id.edit_contact);
@@ -49,6 +57,7 @@ public class EditProfile extends AppCompatActivity {
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         userReference = FirebaseDatabase.getInstance().getReference("Users").child(currentUser.getUid());
+        storageReference = FirebaseStorage.getInstance().getReference("ProfilePictures");
 
         loadUserData();
         etName.setEnabled(false);
@@ -58,6 +67,7 @@ public class EditProfile extends AppCompatActivity {
         // Year picker dialog for birth year
         llBirthYear.setOnClickListener(v -> showDatePickerDialog());
         etBirthDate.setOnClickListener(v -> showDatePickerDialog());
+        editProfilePicture.setOnClickListener(v -> openImagePicker());
         // Update button functionality
         btnUpdate.setOnClickListener(v -> saveProfileChanges());
     }
@@ -70,11 +80,21 @@ public class EditProfile extends AppCompatActivity {
                     String email = snapshot.child("email").getValue(String.class);
                     String contact = snapshot.child("contact").getValue(String.class);
                     String birthYear = snapshot.child("birthYear").getValue(String.class);
+                    String profilePictureUrl = snapshot.child("profilePicture").getValue(String.class);
 
                     etName.setText(name);
                     etEmail.setText(email);
                     etContact.setText(contact);
                     etBirthDate.setText(birthYear);
+
+                    if (profilePictureUrl != null) {
+                        // Load profile picture using a library like Glide or Picasso
+                        Glide.with(EditProfile.this)
+                                .load(profilePictureUrl)
+                                .circleCrop()
+                                .placeholder(R.drawable.ic_baseline_person_24)
+                                .into(profilePicture);
+                    }
                 }
             }
 
@@ -83,6 +103,22 @@ public class EditProfile extends AppCompatActivity {
                 Toast.makeText(EditProfile.this, "Failed to load user data", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    private void openImagePicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+            profileImageUri = data.getData();
+            Glide.with(this)
+                    .load(profileImageUri)
+                    .circleCrop() // Ensures the image is cropped into a circle
+                    .into(profilePicture); // profilePicture is your ImageView
+        }
     }
     private void showDatePickerDialog() {
         final Calendar calendar = Calendar.getInstance();
@@ -127,6 +163,24 @@ public class EditProfile extends AppCompatActivity {
         updates.put("contact", contact);
         updates.put("birthYear", birthDate);
 
+        if (profileImageUri != null) {
+            // Upload the profile picture to Firebase Storage
+            StorageReference fileRef = storageReference.child(currentUser.getUid() + ".jpg");
+            fileRef.putFile(profileImageUri).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        updates.put("profilePicture", uri.toString());
+                        updateUserInDatabase(updates);
+                    });
+                } else {
+                    Toast.makeText(this, "Failed to upload profile picture", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            updateUserInDatabase(updates);
+        }
+    }
+    private void updateUserInDatabase(Map<String, Object> updates) {
         userReference.updateChildren(updates).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(EditProfile.this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
@@ -135,6 +189,7 @@ public class EditProfile extends AppCompatActivity {
             }
         });
     }
+
     private boolean isValidMalaysianPhoneNumber(String contact) {
         // Check if the contact is numeric and follows the Malaysian phone number pattern
         return contact.matches("^0\\d{9,10}$");
