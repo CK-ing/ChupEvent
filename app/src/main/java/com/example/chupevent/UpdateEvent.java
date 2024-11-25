@@ -36,7 +36,7 @@ import java.util.Map;
 public class UpdateEvent extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int MAX_IMAGE_SIZE_MB = 5;
-    private EditText etEventTitle, etEventDetails, etSeats, etStartDate, etEndDate, etStartTime, etEndTime, etLocation;
+    private EditText etEventTitle, etEventDetails, etSeats, etStartDate, etEndDate, etStartTime, etEndTime, etLocation, et_admin_comment;
     private ImageView ivBackBtn, ivThumbnail, addPhoto;
     private Button btnUpdateEvent, btnDeleteEvent;
     private String eventId, oldPhotoUrl;
@@ -56,6 +56,7 @@ public class UpdateEvent extends AppCompatActivity {
         etStartTime = findViewById(R.id.etStartTime);
         etEndTime = findViewById(R.id.etEndTime);
         etLocation = findViewById(R.id.etLocation);
+        et_admin_comment = findViewById(R.id.et_admin_comment);
         ivThumbnail = findViewById(R.id.ivThumbnail);
         addPhoto = findViewById(R.id.add_photo);
         btnUpdateEvent = findViewById(R.id.btnUpdateEvent);
@@ -143,6 +144,7 @@ public class UpdateEvent extends AppCompatActivity {
                         etStartTime.setText(event.getStartTime());
                         etEndTime.setText(event.getEndTime());
                         etLocation.setText(event.getLocation());
+                        et_admin_comment.setText(event.getComment());
                         Glide.with(UpdateEvent.this)
                                 .load(oldPhotoUrl)
                                 .placeholder(R.drawable.ic_baseline_error_24)
@@ -249,6 +251,8 @@ public class UpdateEvent extends AppCompatActivity {
         updatedData.put("endTime", endTime);
         updatedData.put("location", location);
         updatedData.put("photoUrl", photoUrl);
+        updatedData.put("status", "Pending");
+        updatedData.put("comment", null);
         eventRef.updateChildren(updatedData).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(this, "Event updated successfully!", Toast.LENGTH_SHORT).show();

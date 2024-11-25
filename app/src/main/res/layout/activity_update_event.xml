@@ -215,6 +215,26 @@
             android:inputType="text"
             android:layout_marginBottom="16dp"
             android:drawableEnd="@drawable/ic_baseline_location_on_24"/>
+        <!-- Admin Comment Label -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Admin comment"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Manager Comment Input -->
+        <EditText
+            android:id="@+id/et_admin_comment"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="No comments yet"
+            android:padding="12dp"
+            android:enabled="false"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp" />
         <!-- Submit Button -->
         <Button
             android:id="@+id/btnUpdateEvent"
