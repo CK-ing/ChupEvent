@@ -75,7 +75,8 @@ public class EventApproval extends AppCompatActivity {
         btnReject.setOnClickListener(view -> {
             String comment = etAdminComment.getText().toString().trim();
             if (TextUtils.isEmpty(comment)) {
-                Toast.makeText(this, "Please provide a comment to reject the event", Toast.LENGTH_SHORT).show();
+                etAdminComment.setError("Comment is required!");
+                etAdminComment.requestFocus();
                 return;
             }
             updateEventStatus("Rejected", comment);

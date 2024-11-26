@@ -17,7 +17,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:padding="8dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="8dp">
 
             <ImageView
                 android:id="@+id/iv_back_btn_approve_event"
@@ -59,6 +59,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Organizer:"
+                    android:textColor="#808080"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/tv_organizer_name"
@@ -78,7 +84,20 @@
                     android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            />
 
+        <!-- Repeating Information Rows -->
+        <TextView
+            android:paddingTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Event Title:"
+            android:textColor="#808080"
+            android:textSize="14sp" />
         <!-- Event Details -->
         <TextView
             android:id="@+id/tv_event_title"
@@ -98,9 +117,10 @@
 
         <!-- Repeating Information Rows -->
         <TextView
+            android:paddingTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Description"
+            android:text="Description:"
             android:textColor="#808080"
             android:textSize="14sp" />
 
@@ -111,7 +131,7 @@
             android:text="Description goes here..."
             android:textColor="#000000"
             android:textSize="16sp"
-            android:paddingBottom="16dp" />
+            android:paddingBottom="8dp" />
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -119,9 +139,10 @@
              />
 
         <TextView
+            android:paddingTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Location"
+            android:text="Location:"
             android:textColor="#808080"
             android:textSize="14sp" />
 
@@ -132,16 +153,17 @@
             android:text="Location goes here..."
             android:textColor="#000000"
             android:textSize="16sp"
-            android:paddingBottom="16dp" />
+            android:paddingBottom="8dp" />
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#E0E0E0"
              />
         <TextView
+            android:paddingTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="From"
+            android:text="From:"
             android:textColor="#808080"
             android:textSize="14sp" />
 
@@ -152,7 +174,7 @@
             android:text="Date: Date\nTime: Time"
             android:textColor="#000000"
             android:textSize="16sp"
-            android:paddingBottom="16dp" />
+            android:paddingBottom="8dp" />
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -160,9 +182,10 @@
             />
 
         <TextView
+            android:paddingTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="To"
+            android:text="To:"
             android:textColor="#808080"
             android:textSize="14sp" />
 
@@ -173,7 +196,7 @@
             android:text="Date: 25/11/2024\nTime: 18:46"
             android:textColor="#000000"
             android:textSize="16sp"
-            android:paddingBottom="16dp" />
+            android:paddingBottom="8dp" />
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -181,9 +204,10 @@
              />
 
         <TextView
+            android:paddingTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Seats"
+            android:text="Seats:"
             android:textColor="#808080"
             android:textSize="14sp" />
         <TextView
@@ -193,7 +217,7 @@
             android:text="0"
             android:textColor="#000000"
             android:textSize="16sp"
-            android:paddingBottom="16dp" />
+            android:paddingBottom="8dp" />
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -201,9 +225,10 @@
              />
 
         <TextView
+            android:paddingTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Status"
+            android:text="Status:"
             android:textColor="#808080"
             android:textSize="14sp" />
 
@@ -213,7 +238,7 @@
             android:layout_height="wrap_content"
             android:text="Pending"
             android:textSize="16sp"
-            android:paddingBottom="16dp" />
+            android:paddingBottom="8dp" />
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -222,9 +247,10 @@
 
         <!-- Admin Comment Label -->
         <TextView
+            android:paddingTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Admin comment"
+            android:text="Admin comment:"
             android:textColor="#808080"
             android:textSize="14sp"
             android:layout_marginBottom="4dp" />
@@ -239,7 +265,7 @@
             android:textColor="#000000"
             android:textSize="14sp"
             android:background="@drawable/rounded_edit_text_white"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="8dp" />
 
         <!-- Approve and Decline Buttons -->
         <LinearLayout
