@@ -1,11 +1,10 @@
 package com.example.chupevent;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,7 +16,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> implements Filterable {
+public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
     private List<Event> eventList;
     private List<Event> filteredList;
 
@@ -37,6 +36,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         Event event = filteredList.get(position);
         holder.title.setText(event.getTitle());
+        holder.status.setText(event.getStatus());
 
         // Set the color based on the status
         if (event.getStatus().equals("Pending")) {
@@ -48,7 +48,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         } else {
             holder.status.setTextColor(holder.status.getContext().getResources().getColor(R.color.default_text_color));
         }
-        holder.status.setText(event.getStatus());
         Glide.with(holder.image.getContext())
                 .load(event.getPhotoUrl())
                 .placeholder(R.drawable.ic_baseline_error_24)
@@ -67,37 +66,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         return filteredList.size();
     }
 
-    @Override
-    public Filter getFilter() {
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                String query = constraint.toString().toLowerCase();
-                List<Event> filtered = new ArrayList<>();
-
-                if (query.isEmpty()) {
-                    filtered = new ArrayList<>(eventList); // Show all events when query is empty
-                } else {
-                    for (Event event : eventList) {
-                        if (event.getTitle().toLowerCase().contains(query)) {
-                            filtered.add(event);
-                        }
-                    }
-                }
-
-                FilterResults results = new FilterResults();
-                results.values = filtered;
-                return results;
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-                filteredList = (List<Event>) results.values;
-                notifyDataSetChanged();
-            }
-        };
-    }
-
     static class EventViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
         TextView title, status;
@@ -111,7 +79,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     }
     public void updateEventList(List<Event> newEventList) {
         this.eventList = newEventList; // Update the main list
-        this.filteredList = new ArrayList<>(newEventList); // Reset filtered list
+        this.filteredList = new ArrayList<>(newEventList); // Reset filtered list to all events
         notifyDataSetChanged(); // Refresh the adapter
     }
 }
