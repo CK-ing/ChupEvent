@@ -1,64 +1,149 @@
 package com.example.chupevent;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.appcompat.widget.SearchView;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SearchFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class SearchFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private RecyclerView recyclerView;
+    private SearchAdapter adapter;
+    private SearchView searchView;
+    private ChipGroup chipGroup;
+    private Chip chipAll, chipToday, chipThisWeek, chipThisMonth;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public SearchFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SearchFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SearchFragment newInstance(String param1, String param2) {
-        SearchFragment fragment = new SearchFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private DatabaseReference eventsRef, usersRef;
+    private List<Event> eventList = new ArrayList<>();
+    private List<Event> filteredList = new ArrayList<>();
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_search, container, false);
+
+        // Initialize Firebase references
+        eventsRef = FirebaseDatabase.getInstance().getReference("Events");
+        usersRef = FirebaseDatabase.getInstance().getReference("Users");
+
+        // Initialize UI elements
+        recyclerView = view.findViewById(R.id.recyclerView);
+        searchView = view.findViewById(R.id.searchView);
+        chipGroup = view.findViewById(R.id.chipGroup);
+        chipAll = view.findViewById(R.id.chip_all);
+        chipToday = view.findViewById(R.id.chip_today);
+        chipThisWeek = view.findViewById(R.id.chip_this_week);
+        chipThisMonth = view.findViewById(R.id.chip_this_month);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new SearchAdapter(getContext(), filteredList);
+        recyclerView.setAdapter(adapter);
+
+        // Fetch events from Firebase
+        fetchEvents();
+
+        // Set listeners for search and chips
+        setListeners();
+
+        return view;
+    }
+
+    private void fetchEvents() {
+        eventsRef.orderByChild("status").equalTo("Approved")
+                .addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                eventList.clear();
+                for (DataSnapshot eventSnapshot : snapshot.getChildren()) {
+                    Event event = eventSnapshot.getValue(Event.class);
+                    if (event != null) {
+                        fetchOrganizerDetails(event);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getContext(), "Failed to fetch events.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void fetchOrganizerDetails(Event event) {
+        usersRef.child(event.getOrganizerId()).child("name")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String organizerName = snapshot.getValue(String.class);
+                        event.setOrganizerId(organizerName != null ? organizerName : "Unknown Organizer");
+                        eventList.add(event);
+                        applyFilters(); // Apply filters after fetching organizer details
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(getContext(), "Failed to fetch organizer details.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void setListeners() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                applyFilters();
+                return true;
+            }
+        });
+
+        chipGroup.setOnCheckedChangeListener((group, checkedId) -> applyFilters());
+    }
+
+    private void applyFilters() {
+        String query = searchView.getQuery().toString().toLowerCase().trim();
+        filteredList.clear();
+
+        // Get chip filters
+        boolean isAll = chipAll.isChecked();
+        boolean isToday = chipToday.isChecked();
+        boolean isThisWeek = chipThisWeek.isChecked();
+        boolean isThisMonth = chipThisMonth.isChecked();
+
+        for (Event event : eventList) {
+            boolean matchesSearch = query.isEmpty() || event.getTitle().toLowerCase().contains(query);
+            boolean matchesChip = isAll ||
+                    (isToday && DateUtils.isToday(event.getStartDate())) ||
+                    (isThisWeek && DateUtils.isInThisWeek(event.getStartDate())) ||
+                    (isThisMonth && DateUtils.isInThisMonth(event.getStartDate()));
+
+            if (matchesSearch && matchesChip) {
+                filteredList.add(event);
+            }
         }
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        adapter.notifyDataSetChanged();
     }
 }

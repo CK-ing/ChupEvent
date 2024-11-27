@@ -1,16 +1,93 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchFragment">
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- Search Bar -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Search"
-        android:textSize="26dp"
-        android:layout_gravity="center"/>
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
 
-</FrameLayout>
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:queryHint="Search Events"
+            android:iconifiedByDefault="false" />
+    </androidx.cardview.widget.CardView>
+
+    <!-- Chips for Filtering -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        app:singleSelection="true">
+
+        <!-- All Chip -->
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:checked="true"
+            android:text="All"
+            android:textColor="@color/selector_chip_text"
+            app:checkedIconVisible="false"
+            app:chipBackgroundColor="@color/selector_chip_background"
+            app:chipStrokeColor="@color/selector_chip_stroke"
+            app:chipStrokeWidth="1dp" />
+
+        <!-- Today Chip -->
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_today"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="Today"
+            android:textColor="@color/selector_chip_text"
+            app:checkedIconVisible="false"
+            app:chipBackgroundColor="@color/selector_chip_background"
+            app:chipStrokeColor="@color/selector_chip_stroke"
+            app:chipStrokeWidth="1dp" />
+
+        <!-- This Week Chip -->
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_this_week"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="This Week"
+            android:textColor="@color/selector_chip_text"
+            app:checkedIconVisible="false"
+            app:chipBackgroundColor="@color/selector_chip_background"
+            app:chipStrokeColor="@color/selector_chip_stroke"
+            app:chipStrokeWidth="1dp" />
+
+        <!-- This Month Chip -->
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_this_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="This Month"
+            android:textColor="@color/selector_chip_text"
+            app:checkedIconVisible="false"
+            app:chipBackgroundColor="@color/selector_chip_background"
+            app:chipStrokeColor="@color/selector_chip_stroke"
+            app:chipStrokeWidth="1dp" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <!-- RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>

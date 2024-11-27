@@ -3,10 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <queries>
         <intent>
-            <action android:name="android.intent.action.SENDTO"/>
-            <data android:scheme="mailto" android:host="*" />
+            <action android:name="android.intent.action.SENDTO" />
+
+            <data
+                android:host="*"
+                android:scheme="mailto" />
         </intent>
     </queries>
 
@@ -20,6 +24,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ChupEvent"
         tools:targetApi="31">
+        <activity
+            android:name=".RegisterEvent"
+            android:exported="false" />
         <activity
             android:name=".EventApproval"
             android:exported="false" />

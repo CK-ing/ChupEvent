@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Event Image -->
+        <ImageView
+            android:id="@+id/eventImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Event Image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Event Title -->
+        <TextView
+            android:id="@+id/eventTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="Event Title"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/eventImage"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Organizer Name -->
+        <TextView
+            android:id="@+id/organizerName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Organizer Name"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/eventTitle"
+            app:layout_constraintTop_toBottomOf="@id/eventTitle"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Start Date Section -->
+        <ImageView
+            android:id="@+id/dateIcon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_baseline_calendar_month_24"
+            app:layout_constraintStart_toEndOf="@id/eventImage"
+            app:layout_constraintTop_toBottomOf="@id/organizerName" />
+
+        <TextView
+            android:id="@+id/startDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="Start Date"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            app:layout_constraintStart_toEndOf="@id/dateIcon"
+            app:layout_constraintTop_toTopOf="@id/dateIcon"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Start Time Section -->
+        <ImageView
+            android:id="@+id/timeIcon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:src="@drawable/ic_baseline_access_time_24"
+            app:layout_constraintStart_toEndOf="@id/eventImage"
+            app:layout_constraintTop_toBottomOf="@id/startDate" />
+
+        <TextView
+            android:id="@+id/startTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="Start Time"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            app:layout_constraintStart_toEndOf="@id/timeIcon"
+            app:layout_constraintTop_toTopOf="@id/timeIcon"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
