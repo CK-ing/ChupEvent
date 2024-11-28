@@ -4,19 +4,33 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,26 +40,70 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 public class UpdateEvent extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int MAX_IMAGE_SIZE_MB = 5;
-    private EditText etEventTitle, etEventDetails, etSeats, etStartDate, etEndDate, etStartTime, etEndTime, etLocation, et_admin_comment;
+    private EditText etEventTitle, etEventDetails, etSeats, etStartDate, etEndDate, etStartTime, etEndTime, et_admin_comment;
     private ImageView ivBackBtn, ivThumbnail, addPhoto;
     private Button btnUpdateEvent, btnDeleteEvent;
     private String eventId, oldPhotoUrl;
     private Uri newPhotoUri = null;
     private Uri tempUrl = null;
+
+    private AutoCompleteTextView etLocation;
+    private MapView mapView;
+    private GoogleMap googleMap;
+    private TextView tvLocationDetails;
+    private LatLng selectedLocation;
+    private PlacesClient placesClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_event);
+        if (!Places.isInitialized()) {
+            Places.initialize(this, "AIzaSyBMOjikkl6NLbc8U3CA-6iFudRviJawWYg");
+        }
+        placesClient = Places.createClient(this);
+
+        mapView = findViewById(R.id.mapView);
+        tvLocationDetails = findViewById(R.id.tvLocationDetails);
+        etLocation = findViewById(R.id.etLocation);
+
+        // Initialize MapView
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(map -> {
+            googleMap = map;
+            googleMap.getUiSettings().setZoomControlsEnabled(true);
+
+            googleMap.setOnMapClickListener(latLng -> {
+                selectedLocation = latLng;
+                updateMarkerAndLocationDetails(latLng, null);
+            });
+            googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                @Override
+                public void onMarkerDragStart(Marker marker) {
+                }
+                @Override
+                public void onMarkerDrag(Marker marker) {
+                    selectedLocation = marker.getPosition();
+                    updateMarkerAndLocationDetails(selectedLocation, null);
+                }
+                @Override
+                public void onMarkerDragEnd(Marker marker) {
+                }
+            });
+        });
+        setupAutoCompleteTextView();
+
         // Initialize UI components
         ivBackBtn = findViewById(R.id.ivBackButton);
         etEventTitle = findViewById(R.id.etEventTitle);
@@ -145,6 +203,24 @@ public class UpdateEvent extends AppCompatActivity {
                         etEndTime.setText(event.getEndTime());
                         etLocation.setText(event.getLocation());
                         et_admin_comment.setText(event.getComment());
+                        tvLocationDetails.setText(event.getLatLng());
+
+                        // Split the string into latitude and longitude parts
+                        String[] parts = event.getLatLng().split(",");
+                        double latitude = Double.parseDouble(parts[0]);
+                        double longitude = Double.parseDouble(parts[1]);
+                        LatLng location = new LatLng(latitude, longitude);
+                        if (googleMap != null) {
+                            // Move the camera to the location
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 15)); // Zoom level 15 for close-up view
+                            // Add a marker at the location
+                            googleMap.clear(); // Clear previous markers
+                            googleMap.addMarker(new MarkerOptions()
+                                    .position(location)
+                                    .title("Retrieved Location")
+                                    .draggable(true)); // Make the marker static if you don't want it to be draggable
+                        }
+
                         Glide.with(UpdateEvent.this)
                                 .load(oldPhotoUrl)
                                 .placeholder(R.drawable.ic_baseline_error_24)
@@ -168,6 +244,7 @@ public class UpdateEvent extends AppCompatActivity {
         String startTime = etStartTime.getText().toString().trim();
         String endTime = etEndTime.getText().toString().trim();
         String location = etLocation.getText().toString().trim();
+        String coordinates = tvLocationDetails.getText().toString().trim();
         if (TextUtils.isEmpty(title)) {
             etEventTitle.setError("Event title is required");
             etEventTitle.requestFocus();
@@ -222,24 +299,29 @@ public class UpdateEvent extends AppCompatActivity {
             etLocation.requestFocus();
             return;
         }
+        if (TextUtils.isEmpty(coordinates)) {
+            etLocation.setError("Event location is invalid");
+            etLocation.requestFocus();
+            return;
+        }
         // Handle photo upload and event update
         if (newPhotoUri != null) {
-            updateEventWithPhoto(newPhotoUri, title, details, seats, startDate, endDate, startTime, endTime, location);
+            updateEventWithPhoto(newPhotoUri, title, details, seats, startDate, endDate, startTime, endTime, location, coordinates);
         } else {
-            updateEventDetails(title, details, seats, startDate, endDate, startTime, endTime, location, oldPhotoUrl);
+            updateEventDetails(title, details, seats, startDate, endDate, startTime, endTime, location, oldPhotoUrl, coordinates);
         }
     }
-    private void updateEventWithPhoto(Uri photoUri, String title, String details, String seats, String startDate, String endDate, String startTime, String endTime, String location) {
+    private void updateEventWithPhoto(Uri photoUri, String title, String details, String seats, String startDate, String endDate, String startTime, String endTime, String location, String coordinates) {
         setInputFieldsEnabled(false);
         btnUpdateEvent.setText("Updating...");
         StorageReference storageRef = FirebaseStorage.getInstance().getReference("EventPhotos/" + eventId + ".jpg");
         // replace old with new photo using same file name
         storageRef.putFile(photoUri).addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(newPhotoUrl -> {
             // Update event details with new photo URL
-            updateEventDetails(title, details, seats, startDate, endDate, startTime, endTime, location, newPhotoUrl.toString());
+            updateEventDetails(title, details, seats, startDate, endDate, startTime, endTime, location, newPhotoUrl.toString(), coordinates);
         })).addOnFailureListener(e -> Toast.makeText(this, "Photo upload failed", Toast.LENGTH_SHORT).show());
     }
-    private void updateEventDetails(String title, String details, String seats, String startDate, String endDate, String startTime, String endTime, String location, String photoUrl) {
+    private void updateEventDetails(String title, String details, String seats, String startDate, String endDate, String startTime, String endTime, String location, String photoUrl, String coordinates) {
         DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference("Events").child(eventId);
         Map<String, Object> updatedData = new HashMap<>();
         updatedData.put("title", title);
@@ -253,6 +335,7 @@ public class UpdateEvent extends AppCompatActivity {
         updatedData.put("photoUrl", photoUrl);
         updatedData.put("status", "Pending");
         updatedData.put("comment", null);
+        updatedData.put("latLng", coordinates);
         eventRef.updateChildren(updatedData).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(this, "Event updated successfully!", Toast.LENGTH_SHORT).show();
@@ -328,5 +411,85 @@ public class UpdateEvent extends AppCompatActivity {
         addPhoto.setEnabled(enabled);
         btnUpdateEvent.setEnabled(enabled); // disable the button for submission safety
         btnDeleteEvent.setEnabled(enabled);
+        mapView.setEnabled(enabled);
+    }
+    private void setupAutoCompleteTextView() {
+        PlacesAutoCompleteAdapter adapter = new PlacesAutoCompleteAdapter(this, placesClient);
+        etLocation.setAdapter(adapter);
+
+        etLocation.setOnItemClickListener((parent, view, position, id) -> {
+            Place place = adapter.getItem(position);
+            if (place != null) {
+                selectedLocation = place.getLatLng();
+                etLocation.setText(place.getName());
+                if (googleMap != null) {
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(selectedLocation, 15));
+                    updateMarkerAndLocationDetails(selectedLocation, place.getAddress());
+                }
+            }
+        });
+    }
+
+    private void updateMarkerAndLocationDetails(LatLng latLng, @Nullable String address1) {
+        googleMap.clear();
+        googleMap.addMarker(new MarkerOptions()
+                .position(latLng)
+                .title("Selected Location")
+                .draggable(true));
+
+        Geocoder geocoder = new Geocoder(this);
+        try {
+            // Attempt to retrieve the address for the LatLng
+            List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                String fullAddress = address.getAddressLine(0); // Full address
+                // Construct the Google Maps link
+                //String googleMapsLink = "https://www.google.com/maps?q=" + latLng.latitude + "," + latLng.longitude;
+                etLocation.setText(fullAddress);
+                tvLocationDetails.setText(latLng.latitude + "," + latLng.longitude);
+            } else {
+                // Fallback to coordinates if no address is found
+                etLocation.setText("");
+                tvLocationDetails.setText(latLng.latitude + ", " + latLng.longitude);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Fallback to coordinates if Geocoder fails
+            etLocation.setText("");
+            tvLocationDetails.setText(latLng.latitude + ", " + latLng.longitude);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mapView != null) {
+            mapView.onResume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mapView != null) {
+            mapView.onPause();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mapView != null) {
+            mapView.onDestroy();
+        }
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        if (mapView != null) {
+            mapView.onLowMemory();
+        }
     }
 }

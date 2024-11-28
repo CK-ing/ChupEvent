@@ -206,15 +206,29 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
-        <!-- Location -->
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/etLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Location"
-            android:inputType="text"
+            android:hint="Search for a location"
+            android:drawableEnd="@drawable/ic_baseline_search_24"
+            android:layout_marginBottom="16dp"/>
+        <!-- Google Map View -->
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Location Details -->
+        <TextView
+            android:id="@+id/tvLocationDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:background="#f0f0f0"
             android:layout_marginBottom="16dp"
-            android:drawableEnd="@drawable/ic_baseline_location_on_24"/>
+            android:hint="Selected location details will appear here" />
         <!-- Admin Comment Label -->
         <TextView
             android:layout_width="match_parent"
