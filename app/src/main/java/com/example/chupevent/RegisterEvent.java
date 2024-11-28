@@ -16,6 +16,14 @@ import android.content.Intent;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -35,12 +43,28 @@ public class RegisterEvent extends AppCompatActivity {
     private Button registerButton;
     private ImageButton backButton;
 
+    private MapView mapView;
+    private GoogleMap googleMap;
+    private PlacesClient placesClient;
+
     private DatabaseReference eventsRef, usersRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_event);
+        if (!Places.isInitialized()) {
+            Places.initialize(this, "AIzaSyBMOjikkl6NLbc8U3CA-6iFudRviJawWYg");
+        }
+        placesClient = Places.createClient(this);
+
+        mapView = findViewById(R.id.mapView);
+        // Initialize MapView
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(map -> {
+            googleMap = map;
+            googleMap.getUiSettings().setZoomControlsEnabled(true);
+        });
 
         // Initialize views
         backButton = findViewById(R.id.backButton);
@@ -109,6 +133,22 @@ public class RegisterEvent extends AppCompatActivity {
                     String seatsText = String.valueOf(seatsValue);
                     String location = snapshot.child("location").getValue(String.class);
                     String organizerId = snapshot.child("organizerId").getValue(String.class);
+                    String coordinates = snapshot.child("latLng").getValue(String.class);
+                    // Split the string into latitude and longitude parts
+                    String[] parts = coordinates.split(",");
+                    double latitude = Double.parseDouble(parts[0]);
+                    double longitude = Double.parseDouble(parts[1]);
+                    LatLng locationMap = new LatLng(latitude, longitude);
+                    if (googleMap != null) {
+                        // Move the camera to the location
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locationMap, 15)); // Zoom level 15 for close-up view
+                        // Add a marker at the location
+                        googleMap.clear(); // Clear previous markers
+                        googleMap.addMarker(new MarkerOptions()
+                                .position(locationMap)
+                                .title("Retrieved Location")
+                                .draggable(false)); // Make the marker static if you don't want it to be draggable
+                    }
 
                     // Update UI with event details
                     Glide.with(RegisterEvent.this)
@@ -125,6 +165,18 @@ public class RegisterEvent extends AppCompatActivity {
                     endTiming.setText("To: " + endDateValue + " • " + endTimeValue);
                     seats.setText(seatsText + " seats");
                     eventLocation.setText(location);
+
+                    eventLocation.setOnClickListener(v -> {
+                        String geoUri = "geo:" + latitude + "," + longitude + "?q=" + latitude + "," + longitude + "(Selected Location)";
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri));
+                        mapIntent.setPackage("com.google.android.apps.maps"); // Ensure the intent is handled by Google Maps
+
+                        if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                            startActivity(mapIntent);
+                        } else {
+                            Toast.makeText(RegisterEvent.this, "Google Maps is not installed.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
                     // Load organizer details
                     if (organizerId != null) {
