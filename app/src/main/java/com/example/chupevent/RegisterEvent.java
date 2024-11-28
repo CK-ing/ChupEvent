@@ -1,11 +1,14 @@
 package com.example.chupevent;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,11 +16,16 @@ import android.content.Intent;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RegisterEvent extends AppCompatActivity {
 
@@ -25,6 +33,7 @@ public class RegisterEvent extends AppCompatActivity {
     private TextView eventTitle, startDate, startTime, eventDetails, startTiming, endTiming, seats, eventLocation;
     private TextView organizerContacts, organizerEmail, organizerName;
     private Button registerButton;
+    private ImageButton backButton;
 
     private DatabaseReference eventsRef, usersRef;
 
@@ -34,6 +43,7 @@ public class RegisterEvent extends AppCompatActivity {
         setContentView(R.layout.activity_register_event);
 
         // Initialize views
+        backButton = findViewById(R.id.backButton);
         eventThumbnail = findViewById(R.id.eventThumbnail);
         eventTitle = findViewById(R.id.eventTitle);
         startDate = findViewById(R.id.startDate);
@@ -49,6 +59,8 @@ public class RegisterEvent extends AppCompatActivity {
         organizerImage = findViewById(R.id.organizerImage);
         registerButton = findViewById(R.id.registerButton);
 
+        backButton.setOnClickListener(v -> finish());
+
         // Get Event ID from Intent
         String eventId = getIntent().getStringExtra("eventId");
 
@@ -62,6 +74,22 @@ public class RegisterEvent extends AppCompatActivity {
             Toast.makeText(this, "Event ID not found!", Toast.LENGTH_SHORT).show();
             finish();
         }
+
+        registerButton.setOnClickListener(v -> {
+            // Get the currently logged-in user
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            if (currentUser != null) {
+                // Get user ID
+                String userId = currentUser.getUid();
+
+                if (eventId != null) {
+                    registerForEvent(userId, eventId);
+                } else {
+                    Toast.makeText(RegisterEvent.this, "Event ID not found!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void loadEventDetails(String eventId) {
@@ -157,6 +185,44 @@ public class RegisterEvent extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError error) {
                 Toast.makeText(RegisterEvent.this, "Failed to load organizer details.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void registerForEvent(String userId, String eventId) {
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users").child(userId).child("registeredEvents");
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // Retrieve the list of registered events
+                    List<String> registeredEvents = new ArrayList<>();
+                    for (DataSnapshot eventSnapshot : snapshot.getChildren()) {
+                        registeredEvents.add(eventSnapshot.getValue(String.class));
+                    }
+
+                    // Check if the event is already registered
+                    if (registeredEvents.contains(eventId)) {
+                        Toast.makeText(RegisterEvent.this, "You already registered for this event.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Add the new event ID
+                        userRef.push().setValue(eventId)
+                                .addOnSuccessListener(aVoid -> Toast.makeText(RegisterEvent.this, "Event registration successful!", Toast.LENGTH_SHORT).show())
+                                .addOnFailureListener(e -> Toast.makeText(RegisterEvent.this, "Failed to register for the event.", Toast.LENGTH_SHORT).show());
+                        finish();
+                    }
+                } else {
+                    // If registeredEvents does not exist, add the first event ID
+                    userRef.push().setValue(eventId)
+                            .addOnSuccessListener(aVoid -> Toast.makeText(RegisterEvent.this, "Event registration successful!", Toast.LENGTH_SHORT).show())
+                            .addOnFailureListener(e -> Toast.makeText(RegisterEvent.this, "Failed to register for the event.", Toast.LENGTH_SHORT).show());
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(RegisterEvent.this, "Failed to check registration status.", Toast.LENGTH_SHORT).show();
             }
         });
     }
