@@ -1,26 +1,43 @@
 package com.example.chupevent;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.*;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.android.libraries.places.api.model.Place;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -31,15 +48,17 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-public class CreateFragment extends Fragment {
+public class CreateFragment extends Fragment  {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -47,7 +66,7 @@ public class CreateFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private EditText etEventTitle, etEventDetails, etSeats, etStartDate, etEndDate, etStartTime, etEndTime, etLocation;
+    private EditText etEventTitle, etEventDetails, etSeats, etStartDate, etEndDate, etStartTime, etEndTime;
     private ImageView addPhoto, ivThumbnail;
     private Button btnCreateEvent;
     private Uri photoUri, tempUri;
@@ -55,7 +74,13 @@ public class CreateFragment extends Fragment {
     private StorageReference storageReference;
     private OrganizerMainActivity organizerMainActivity;
     private final Calendar calendar = Calendar.getInstance();
-    private static final int PICK_IMAGE_REQUEST = 100;
+
+    private AutoCompleteTextView etLocation;
+    private MapView mapView;
+    private GoogleMap googleMap;
+    private TextView tvLocationDetails;
+    private LatLng selectedLocation;
+    private PlacesClient placesClient;
 
     public CreateFragment() {
     }
@@ -83,11 +108,46 @@ public class CreateFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        if (!Places.isInitialized()) {
+            Places.initialize(requireContext(), "AIzaSyBMOjikkl6NLbc8U3CA-6iFudRviJawWYg");
+        }
+        placesClient = Places.createClient(requireContext());
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create, container, false);
+
+        mapView = view.findViewById(R.id.mapView);
+        tvLocationDetails = view.findViewById(R.id.tvLocationDetails);
+        etLocation = view.findViewById(R.id.etLocation);
+
+        // Initialize MapView
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(map -> {
+            googleMap = map;
+            googleMap.getUiSettings().setZoomControlsEnabled(true);
+
+            googleMap.setOnMapClickListener(latLng -> {
+                selectedLocation = latLng;
+                updateMarkerAndLocationDetails(latLng, null);
+            });
+            googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                @Override
+                public void onMarkerDragStart(Marker marker) {
+                }
+                @Override
+                public void onMarkerDrag(Marker marker) {
+                    selectedLocation = marker.getPosition();
+                    updateMarkerAndLocationDetails(selectedLocation, null);
+                }
+                @Override
+                public void onMarkerDragEnd(Marker marker) {
+                }
+            });
+        });
+        setupAutoCompleteTextView();
+
         // Initialize Firebase references
         databaseReference = FirebaseDatabase.getInstance().getReference("Events");
         storageReference = FirebaseStorage.getInstance().getReference("EventPhotos");
@@ -99,7 +159,6 @@ public class CreateFragment extends Fragment {
         etEndDate = view.findViewById(R.id.etDateEnd);
         etStartTime = view.findViewById(R.id.etStartTime);
         etEndTime = view.findViewById(R.id.etEndTime);
-        etLocation = view.findViewById(R.id.etLocation);
         addPhoto = view.findViewById(R.id.add_photo);
         ivThumbnail = view.findViewById(R.id.ivThumbnail);
         btnCreateEvent = view.findViewById(R.id.btnCreateEvent);
@@ -124,6 +183,7 @@ public class CreateFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //file photo selection
         if (requestCode == 100 && data != null && data.getData() != null) {
             tempUri = data.getData();
             try {
@@ -145,7 +205,7 @@ public class CreateFragment extends Fragment {
                 ivThumbnail.setImageResource(0); // Reset the ImageView
             }
         }
-        }
+    }
 
     private void openDatePicker(EditText editText) {
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year, month, dayOfMonth) -> {
@@ -175,6 +235,7 @@ public class CreateFragment extends Fragment {
         String startTime = etStartTime.getText().toString().trim();
         String endTime = etEndTime.getText().toString().trim();
         String location = etLocation.getText().toString().trim();
+        String coordinates = tvLocationDetails.getText().toString().trim();
         if (TextUtils.isEmpty(title)) {
             etEventTitle.setError("Event title is required");
             etEventTitle.requestFocus();
@@ -233,63 +294,69 @@ public class CreateFragment extends Fragment {
             Toast.makeText(getContext(), "Event photo is required", Toast.LENGTH_SHORT).show();
             return;
         }
-        uploadEventToFirebase(title, details, seats, startDate, endDate, startTime, endTime, location);
+        if (TextUtils.isEmpty(coordinates)){
+            etLocation.setError("Event location is invalid");
+            etLocation.requestFocus();
+            return;
+        }
+        uploadEventToFirebase(title, details, seats, startDate, endDate, startTime, endTime, location, coordinates);
     }
 
-    private void uploadEventToFirebase(String title, String details, String seats, String startDate, String endDate, String startTime, String endTime, String location) {
+    private void uploadEventToFirebase(String title, String details, String seats, String startDate, String endDate, String startTime, String endTime, String location, String coordinates) {
         setInputFieldsEnabled(false);
         btnCreateEvent.setText("Creating...");
         String eventId = databaseReference.push().getKey();
         String organizerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         StorageReference fileReference = storageReference.child(eventId + ".jpg");
         fileReference.putFile(photoUri).addOnSuccessListener(taskSnapshot -> fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
-            String photoUrl = uri.toString();
-            if(eventId == null){
-                Toast.makeText(getContext(), "Failed to generate event ID", Toast.LENGTH_SHORT).show();
-                setInputFieldsEnabled(true);
-                btnCreateEvent.setText("Create Event");
-                return;
-            }
-            HashMap<String, Object> eventMap = new HashMap<>();
-            eventMap.put("eventId", eventId);
-            eventMap.put("title", title);
-            eventMap.put("details", details);
-            eventMap.put("seats", Integer.parseInt(seats));
-            eventMap.put("startDate", startDate);
-            eventMap.put("endDate", endDate);
-            eventMap.put("startTime", startTime);
-            eventMap.put("endTime", endTime);
-            eventMap.put("location", location);
-            eventMap.put("photoUrl", photoUrl);
-            eventMap.put("status", "Pending");
-            eventMap.put("organizerId", organizerId);
+                            String photoUrl = uri.toString();
+                            if(eventId == null){
+                                Toast.makeText(getContext(), "Failed to generate event ID", Toast.LENGTH_SHORT).show();
+                                setInputFieldsEnabled(true);
+                                btnCreateEvent.setText("Create Event");
+                                return;
+                            }
+                            HashMap<String, Object> eventMap = new HashMap<>();
+                            eventMap.put("eventId", eventId);
+                            eventMap.put("title", title);
+                            eventMap.put("details", details);
+                            eventMap.put("seats", Integer.parseInt(seats));
+                            eventMap.put("startDate", startDate);
+                            eventMap.put("endDate", endDate);
+                            eventMap.put("startTime", startTime);
+                            eventMap.put("endTime", endTime);
+                            eventMap.put("location", location);
+                            eventMap.put("photoUrl", photoUrl);
+                            eventMap.put("status", "Pending");
+                            eventMap.put("organizerId", organizerId);
+                            eventMap.put("latLng", coordinates);
 
-                    // Upload the event details to Firebase Realtime Database
-                    databaseReference.child(eventId).setValue(eventMap)
-                            .addOnSuccessListener(aVoid -> {
-                                // Add event ID to the user's organizedEvents field
-                                addEventIdToUser(eventId);
-                                Toast.makeText(getContext(), "Event created successfully", Toast.LENGTH_SHORT).show();
-                                resetForm(); // Clear all inputs and reset the form
-                                setInputFieldsEnabled(true);
-                                btnCreateEvent.setText("Create Event");
-                            })
-                            .addOnFailureListener(e -> {
-                                Toast.makeText(getContext(), "Failed to create event", Toast.LENGTH_SHORT).show();
-                                setInputFieldsEnabled(true);
-                                btnCreateEvent.setText("Create Event");
-                            });
-                })
+                            // Upload the event details to Firebase Realtime Database
+                            databaseReference.child(eventId).setValue(eventMap)
+                                    .addOnSuccessListener(aVoid -> {
+                                        // Add event ID to the user's organizedEvents field
+                                        addEventIdToUser(eventId);
+                                        Toast.makeText(getContext(), "Event created successfully", Toast.LENGTH_SHORT).show();
+                                        resetForm(); // Clear all inputs and reset the form
+                                        setInputFieldsEnabled(true);
+                                        btnCreateEvent.setText("Create Event");
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(getContext(), "Failed to create event", Toast.LENGTH_SHORT).show();
+                                        setInputFieldsEnabled(true);
+                                        btnCreateEvent.setText("Create Event");
+                                    });
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(getContext(), "Failed to retrieve photo URL", Toast.LENGTH_SHORT).show();
+                            setInputFieldsEnabled(true);
+                            btnCreateEvent.setText("Create Event");
+                        }))
                 .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Failed to retrieve photo URL", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Failed to upload photo", Toast.LENGTH_SHORT).show();
                     setInputFieldsEnabled(true);
                     btnCreateEvent.setText("Create Event");
-                }))
-        .addOnFailureListener(e -> {
-            Toast.makeText(getContext(), "Failed to upload photo", Toast.LENGTH_SHORT).show();
-            setInputFieldsEnabled(true);
-            btnCreateEvent.setText("Create Event");
-        });
+                });
     }
     private void addEventIdToUser(String eventId) {
         // Replace "LoggedInUserId" with the actual user ID of the logged-in organizer
@@ -332,6 +399,8 @@ public class CreateFragment extends Fragment {
         etLocation.setText("");
         ivThumbnail.setImageResource(R.drawable.ic_baseline_add_24); // Reset to default add icon
         photoUri = null;
+        googleMap.clear();
+        tvLocationDetails.setText("");
     }
     private void setInputFieldsEnabled(boolean enabled) {
         etEventTitle.setEnabled(enabled);
@@ -345,6 +414,7 @@ public class CreateFragment extends Fragment {
         addPhoto.setEnabled(enabled);
         btnCreateEvent.setEnabled(enabled); // disable the button for submission safety
         organizerMainActivity.setBottomNavigationEnabled(enabled);
+        mapView.setEnabled(enabled);
     }
     private long getFileSize(Uri uri) throws Exception {
         Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
@@ -355,5 +425,84 @@ public class CreateFragment extends Fragment {
         long fileSize = cursor.getLong(sizeIndex);
         cursor.close();
         return fileSize;
+    }
+    private void setupAutoCompleteTextView() {
+        PlacesAutoCompleteAdapter adapter = new PlacesAutoCompleteAdapter(requireContext(), placesClient);
+        etLocation.setAdapter(adapter);
+
+        etLocation.setOnItemClickListener((parent, view, position, id) -> {
+            Place place = adapter.getItem(position);
+            if (place != null) {
+                selectedLocation = place.getLatLng();
+                etLocation.setText(place.getName());
+                if (googleMap != null) {
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(selectedLocation, 15));
+                    updateMarkerAndLocationDetails(selectedLocation, place.getAddress());
+                }
+            }
+        });
+    }
+
+    private void updateMarkerAndLocationDetails(LatLng latLng, @Nullable String address1) {
+        googleMap.clear();
+        googleMap.addMarker(new MarkerOptions()
+                .position(latLng)
+                .title("Selected Location")
+                .draggable(true));
+
+        Geocoder geocoder = new Geocoder(getContext());
+        try {
+            // Attempt to retrieve the address for the LatLng
+            List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                String fullAddress = address.getAddressLine(0); // Full address
+                // Construct the Google Maps link
+                //String googleMapsLink = "https://www.google.com/maps?q=" + latLng.latitude + "," + latLng.longitude;
+                etLocation.setText(fullAddress);
+                tvLocationDetails.setText(latLng.latitude + "," + latLng.longitude);
+            } else {
+                // Fallback to coordinates if no address is found
+                etLocation.setText("");
+                tvLocationDetails.setText(latLng.latitude + ", " + latLng.longitude);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Fallback to coordinates if Geocoder fails
+            etLocation.setText("");
+            tvLocationDetails.setText(latLng.latitude + ", " + latLng.longitude);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mapView != null) {
+            mapView.onResume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mapView != null) {
+            mapView.onPause();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mapView != null) {
+            mapView.onDestroy();
+        }
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        if (mapView != null) {
+            mapView.onLowMemory();
+        }
     }
 }
