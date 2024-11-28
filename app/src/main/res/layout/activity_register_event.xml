@@ -154,6 +154,26 @@
                 android:textColor="#000000"
                 android:textSize="14sp" />
 
+            <!-- Location -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Location"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/eventLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Location"
+                android:textStyle="bold"
+                android:textColor="#0000FF"
+                android:textSize="16sp" />
+
             <!-- Links -->
             <TextView
                 android:layout_width="match_parent"

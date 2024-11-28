@@ -22,7 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 public class RegisterEvent extends AppCompatActivity {
 
     private ImageView eventThumbnail, organizerImage;
-    private TextView eventTitle, startDate, startTime, eventDetails, startTiming, endTiming, seats;
+    private TextView eventTitle, startDate, startTime, eventDetails, startTiming, endTiming, seats, eventLocation;
     private TextView organizerContacts, organizerEmail, organizerName;
     private Button registerButton;
 
@@ -42,6 +42,7 @@ public class RegisterEvent extends AppCompatActivity {
         startTiming = findViewById(R.id.startTiming);
         endTiming = findViewById(R.id.endTiming);
         seats = findViewById(R.id.seats);
+        eventLocation = findViewById(R.id.eventLocation);
         organizerContacts = findViewById(R.id.organizerContacts);
         organizerEmail = findViewById(R.id.organizerEmail);
         organizerName = findViewById(R.id.organizerName);
@@ -78,6 +79,7 @@ public class RegisterEvent extends AppCompatActivity {
                     String details = snapshot.child("details").getValue(String.class);
                     int seatsValue = snapshot.child("seats").getValue(int.class);
                     String seatsText = String.valueOf(seatsValue);
+                    String location = snapshot.child("location").getValue(String.class);
                     String organizerId = snapshot.child("organizerId").getValue(String.class);
 
                     // Update UI with event details
@@ -94,6 +96,7 @@ public class RegisterEvent extends AppCompatActivity {
                     startTiming.setText("From: " + startDateValue + " • " + startTimeValue);
                     endTiming.setText("To: " + endDateValue + " • " + endTimeValue);
                     seats.setText(seatsText + " seats");
+                    eventLocation.setText(location);
 
                     // Load organizer details
                     if (organizerId != null) {

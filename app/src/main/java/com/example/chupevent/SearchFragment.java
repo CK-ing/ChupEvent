@@ -22,8 +22,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class SearchFragment extends Fragment {
 
@@ -75,7 +79,7 @@ public class SearchFragment extends Fragment {
                 eventList.clear();
                 for (DataSnapshot eventSnapshot : snapshot.getChildren()) {
                     Event event = eventSnapshot.getValue(Event.class);
-                    if (event != null) {
+                    if (event != null && !isDateTimeOver(event.getStartDate(), event.getStartTime())) {
                         fetchOrganizerDetails(event);
                     }
                 }
@@ -145,5 +149,26 @@ public class SearchFragment extends Fragment {
         }
 
         adapter.notifyDataSetChanged();
+    }
+    private boolean isDateTimeOver(String date, String time) {
+        try {
+            // Combine date and time into one string
+            String dateTimeString = date + " " + time;
+
+            // Define the format for both date and time
+            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+
+            // Parse the combined date-time string
+            Date eventDateTime = dateTimeFormat.parse(dateTimeString);
+
+            // Get the current date and time
+            Date currentDateTime = new Date();
+
+            // Compare the parsed date-time with the current date-time
+            return eventDateTime != null && eventDateTime.before(currentDateTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false; // If parsing fails, treat the date-time as not over
+        }
     }
 }
