@@ -1,20 +1,268 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".UpcomingActivity">
+
+    <FrameLayout
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/grey_circle_background"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Back Button -->
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back Button"
+            android:src="@drawable/ic_baseline_arrow_back_24"
+            app:tint="#ffffff" />
+    </FrameLayout>
+
+    <!-- QR Code -->
+    <ImageView
+        android:id="@+id/qr_code"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:contentDescription="QR Code"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_baseline_error_24" />
+
+    <!-- Ticket Count -->
     <TextView
-        android:id="@+id/text_upcoming"
+        android:id="@+id/ticket_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Upcoming"
-        android:textSize="26dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Ticket 1 of 1"
+        android:textSize="14sp"
+        android:textColor="#808080"
+        app:layout_constraintTop_toBottomOf="@id/qr_code"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+
+    <!-- Name -->
+    <View
+        android:id="@+id/dashed_line"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/dashed_line"
+        app:layout_constraintBottom_toTopOf="@+id/name_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/ticket_count" />
 
+    <TextView
+        android:id="@+id/name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:textSize="14sp"
+        android:textColor="#808080"
+        app:layout_constraintTop_toBottomOf="@id/dashed_line"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="32dp" />
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Yong Choon Kit"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        app:layout_constraintTop_toBottomOf="@id/name_label"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="32dp" />
+
+
+    <!-- Event Title -->
+    <TextView
+        android:id="@+id/title_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Event"
+        android:textSize="14sp"
+        android:textColor="#808080"
+        app:layout_constraintTop_toBottomOf="@id/name"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="32dp" />
+    <TextView
+        android:id="@+id/event_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="I-Nation Global Summit 2024"
+        android:textSize="18sp"
+        android:textColor="#000000"
+        app:layout_constraintTop_toBottomOf="@id/title_label"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="32dp" />
+
+    <!-- Date and Location Section -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <!-- Date Section -->
+    <TextView
+        android:id="@+id/date_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:textSize="14sp"
+        android:textColor="#808080"
+        app:layout_constraintTop_toBottomOf="@id/event_title"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="32dp" />
+
+    <TextView
+        android:id="@+id/date_value"
+        android:layout_width="168dp"
+        android:layout_height="wrap_content"
+        android:text="dd/MM - dd/MM\nStarts at: 8:30 AM \nEnds at: 8:30 AM"
+        android:textSize="14sp"
+        android:textColor="#000000"
+        app:layout_constraintTop_toBottomOf="@id/date_label"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="32dp" />
+    <TextView
+        android:id="@+id/event_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Event Details"
+        android:textSize="14sp"
+        android:textColor="#0000EE"
+        app:layout_constraintTop_toBottomOf="@id/date_value"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="32dp" />
+
+    <!-- Location Section -->
+    <TextView
+        android:id="@+id/location_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location"
+        android:textSize="14sp"
+        android:textColor="#808080"
+        app:layout_constraintTop_toBottomOf="@id/event_title"
+        app:layout_constraintStart_toStartOf="@id/guideline_center"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp" />
+
+    <TextView
+        android:id="@+id/location_value"
+        android:layout_width="168dp"
+        android:layout_height="wrap_content"
+        android:text="7 Jalan Kerinchi,\nKuala Lumpur, Wilayah Persekutuan\nKuala Lumpur 59200"
+        android:textSize="14sp"
+        android:textColor="#000000"
+        app:layout_constraintTop_toBottomOf="@id/location_label"
+        app:layout_constraintStart_toStartOf="@id/guideline_center"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp" />
+    <TextView
+        android:id="@+id/see_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="See map"
+        android:textSize="14sp"
+        android:textColor="#0000EE"
+        app:layout_constraintTop_toBottomOf="@id/location_value"
+        app:layout_constraintStart_toStartOf="@id/guideline_center"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp" />
+
+    <View
+        android:id="@+id/dashed_line_2"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/dashed_line"
+        app:layout_constraintBottom_toTopOf="@+id/organizer_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/see_map" />
+
+    <TextView
+        android:id="@+id/contacts_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Contacts"
+        android:textSize="14sp"
+        android:textColor="#808080"
+        app:layout_constraintTop_toBottomOf="@id/dashed_line_2"
+        app:layout_constraintStart_toStartOf="@id/guideline_center"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp" />
+    <TextView
+        android:id="@+id/phone_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Organiser Phone Number"
+        android:textSize="14sp"
+        android:textColor="#0000EE"
+        app:layout_constraintTop_toBottomOf="@id/contacts_label"
+        app:layout_constraintStart_toStartOf="@+id/guideline_center"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp" />
+    <TextView
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Organiser Email"
+        android:textSize="14sp"
+        android:textColor="#0000EE"
+        app:layout_constraintTop_toBottomOf="@id/phone_number"
+        app:layout_constraintStart_toStartOf="@+id/guideline_center"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="16dp" />
+
+    <!-- Organizer -->
+    <TextView
+        android:id="@+id/organizer_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Organizer"
+        android:textSize="14sp"
+        android:textColor="#808080"
+        app:layout_constraintTop_toBottomOf="@id/dashed_line_2"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="32dp" />
+    <TextView
+        android:id="@+id/organizer"
+        android:layout_width="168dp"
+        android:layout_height="wrap_content"
+        android:text="Organiser Name"
+        android:textSize="14sp"
+        android:textColor="#000000"
+        app:layout_constraintTop_toBottomOf="@id/organizer_label"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="32dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

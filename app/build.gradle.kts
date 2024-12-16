@@ -53,5 +53,7 @@ dependencies {
     annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
     implementation ("com.google.android.gms:play-services-maps:18.1.0")
     implementation ("com.google.android.libraries.places:places:2.7.0")
+    implementation ("com.google.zxing:core:3.4.1")
+    implementation ("com.journeyapps:zxing-android-embedded:4.3.0")
 
 }
