@@ -1,16 +1,52 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ActivityFragment">
-
-    <!-- TODO: Update blank fragment layout -->
+    android:layout_height="match_parent">
+    <!-- Title -->
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/account_title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="left"
         android:text="Activity"
-        android:textSize="26dp"
-        android:layout_gravity="center"/>
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:textSize="28sp"
+        android:textColor="#000000"
+        android:textStyle="bold" />
 
-</FrameLayout>
+    <!-- TabLayout -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        app:tabTextColor="@color/black"
+        app:tabSelectedTextColor="@color/orange"
+        app:tabIndicatorColor="@color/orange"
+        app:tabIndicatorHeight="2dp"
+        app:tabIndicatorFullWidth="true"
+        android:layout_below="@id/account_title">
+
+        <!-- Upcoming Tab -->
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Upcoming" />
+
+        <!-- Past Tickets Tab -->
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Past tickets" />
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <!-- ViewPager2 -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tab_layout" />
+
+</RelativeLayout>

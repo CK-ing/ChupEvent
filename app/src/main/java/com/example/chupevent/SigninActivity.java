@@ -159,6 +159,7 @@ public class SigninActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
+                                        Log.w(TAG, "Database query for email sign in cancelled. Error code: " + error.getCode() + ", Message: " + error.getMessage());
                                         Toast.makeText(SigninActivity.this, "Failed to retrieve role. Try again later.", Toast.LENGTH_SHORT).show();
                                     }
                                 });
@@ -247,6 +248,7 @@ public class SigninActivity extends AppCompatActivity {
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                         // Database error occurred
+                        Log.w(TAG, "Database query cancelled. Error code: " + error.getCode() + ", Message: " + error.getMessage());
                         Toast.makeText(SigninActivity.this, "Failed to check user existence. Try again later.", Toast.LENGTH_SHORT).show();
                     }
                 });
