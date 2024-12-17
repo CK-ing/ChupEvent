@@ -5,6 +5,16 @@
         <item name="android:windowBackground">@color/white</item>
         <item name="android:colorBackground">@color/white</item>
         <item name="android:statusBarColor">@android:color/darker_gray</item>
+
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/bright_red</item> <!-- Orange (Replace with your desired color) -->
+        <item name="colorPrimaryVariant">@color/bright_red</item> <!-- Darker Orange -->
+        <item name="colorOnPrimary">@color/bright_red</item> <!-- Text/Icons on Primary color -->
+
+        <!-- Secondary color -->
+        <item name="colorSecondary">@color/bright_red</item> <!-- Yellow -->
+        <item name="colorSecondaryVariant">@color/bright_red</item> <!-- Amber -->
+        <item name="colorOnSecondary">@color/bright_red</item> <!-- Text/Icons on Secondary color -->
     </style>
 
     <style name="Theme.ChupEvent" parent="Base.Theme.ChupEvent" />
