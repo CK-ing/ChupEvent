@@ -6,7 +6,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class RegisteredEventAdapter extends RecyclerView.Adapter<RegisteredEventAdapter.EventViewHolder> {
 
@@ -57,6 +59,8 @@ public class RegisteredEventAdapter extends RecyclerView.Adapter<RegisteredEvent
         }
         // Extract day and month from startDate
         String startDate = event.getStartDate();
+        String endDate = event.getEndDate();
+        String endTime = event.getEndTime();
         if (startDate != null) {
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -67,6 +71,19 @@ public class RegisteredEventAdapter extends RecyclerView.Adapter<RegisteredEvent
                 int month = calendar.get(Calendar.MONTH); // 0-indexed (January = 0)
                 holder.text_date_day.setText(String.valueOf(day));
                 holder.text_date_month.setText(getMonthName(month));
+                // Check if the event is in the past
+                if (isPastEvent(endDate,endTime)) {
+                    // Apply grayscale filter for past events
+                    ColorMatrix matrix = new ColorMatrix();
+                    matrix.setSaturation(0); // Grayscale filter
+                    ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+                    holder.image.setColorFilter(filter);
+                    holder.text_date_month.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.black));
+                } else {
+                    // Remove any filters for upcoming events
+                    holder.image.clearColorFilter();
+                    holder.text_date_month.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.bright_red));
+                }
             } catch (ParseException e) {
                 e.printStackTrace();
                 // Handle parsing exception (e.g., set default values)
@@ -106,6 +123,15 @@ public class RegisteredEventAdapter extends RecyclerView.Adapter<RegisteredEvent
     }
     private static String getMonthName(int month) {
         return new DateFormatSymbols().getMonths()[month].substring(0, 3).toUpperCase();
+    }
+    private boolean isPastEvent(String endDate, String endTime) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+        try {
+            Date eventEndDateTime = sdf.parse(endDate + " " + endTime);
+            return eventEndDateTime.before(new Date());
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
 

@@ -24,7 +24,7 @@ android:paddingEnd="8dp">
     android:text="DEC"
     android:textStyle="bold"
     android:textSize="14sp"
-    android:textColor="@color/black" />
+    android:textColor="@color/bright_red" />
 
 <!-- Day -->
 <TextView
