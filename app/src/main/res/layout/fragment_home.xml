@@ -9,7 +9,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Home"
+        android:text="Welcome To ChupEvent!"
+        android:textStyle="bold"
         android:textSize="26dp"
         android:layout_gravity="center"/>
 
