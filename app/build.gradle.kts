@@ -56,5 +56,6 @@ dependencies {
     implementation ("com.google.zxing:core:3.4.1")
     implementation ("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation ("pl.droidsonroids.gif:android-gif-drawable:1.2.25")
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
 }

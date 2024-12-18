@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+        <ImageView
+            android:id="@+id/profile_image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/circle_background"
+            android:src="@drawable/ic_baseline_person_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/name_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="CK"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/profile_image"
+            app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/ratings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5.0"
+            android:textSize="14dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ratings_label"
+            app:layout_constraintStart_toEndOf="@+id/ratings_label"
+            app:layout_constraintTop_toTopOf="@+id/ratings_label">
+        </TextView>
+        <TextView
+            android:id="@+id/ratings_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ratings: "
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/name_text"
+            app:layout_constraintTop_toBottomOf="@+id/name_text" />
+        <TextView
+            android:id="@+id/recommend_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recommend: "
+            android:layout_marginLeft="8dp"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/ratings"
+            app:layout_constraintStart_toEndOf="@+id/ratings"
+            app:layout_constraintTop_toTopOf="@+id/ratings"></TextView>
+        <TextView
+            android:id="@+id/recommend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Yes"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/recommend_label"
+            app:layout_constraintStart_toEndOf="@+id/recommend_label"
+            app:layout_constraintTop_toTopOf="@+id/recommend_label"></TextView>
+        <TextView
+            android:id="@+id/comments_text"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:text="Comments "
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@+id/profile_image"
+            app:layout_constraintTop_toBottomOf="@+id/ratings_label" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
