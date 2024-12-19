@@ -27,7 +27,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop" />
-
                 <!-- Floating Back Button -->
                 <!-- Translucent White Circle -->
                 <FrameLayout
@@ -40,7 +39,6 @@
                     android:layout_marginBottom="8dp"
                     android:background="@drawable/white_circle_background"
                     android:gravity="center">
-
                     <!-- Back Button -->
                     <ImageButton
                         android:id="@+id/backButton"
@@ -53,14 +51,12 @@
                         app:tint="#000000" />
                 </FrameLayout>
             </RelativeLayout>
-
             <!-- Old Event Header Section
             <ImageView
                 android:id="@+id/eventThumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
                 android:scaleType="centerCrop" /> -->
-
             <TextView
                 android:id="@+id/eventTitle"
                 android:layout_width="match_parent"
@@ -70,7 +66,6 @@
                 android:textColor="#000000"
                 android:textSize="36sp"
                 android:textStyle="bold" />
-
             <!-- Date and Time -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -78,20 +73,17 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="16dp"
                 android:gravity="center">
-
                 <LinearLayout
                     android:layout_width="150dp"
                     android:layout_height="60dp"
                     android:orientation="horizontal"
                     android:gravity="center"
                     android:background="@drawable/rounded_corner_background">
-
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_baseline_calendar_month_24"
                         app:tint="@color/orange" />
-
                     <TextView
                         android:id="@+id/startDate"
                         android:layout_width="wrap_content"
@@ -101,7 +93,6 @@
                         android:textSize="16sp"
                         android:textColor="#000000" />
                 </LinearLayout>
-
                 <LinearLayout
                     android:layout_width="150dp"
                     android:layout_height="60dp"
@@ -109,13 +100,11 @@
                     android:orientation="horizontal"
                     android:gravity="center"
                     android:background="@drawable/rounded_corner_background">
-
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_baseline_access_time_24"
                         app:tint="@color/orange" />
-
                     <TextView
                         android:id="@+id/startTime"
                         android:layout_width="wrap_content"
@@ -126,7 +115,6 @@
                         android:textColor="#000000" />
                 </LinearLayout>
             </LinearLayout>
-
             <!-- About Event -->
             <TextView
                 android:layout_width="match_parent"
@@ -136,7 +124,6 @@
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:id="@+id/eventDetails"
                 android:layout_width="match_parent"
@@ -145,7 +132,6 @@
                 android:text="We are pleased to announce that on June 1st, 2024, the Persatuan Mahasiswa Teknologi Komputer (PETAKOM) launched the PETAKOM"
                 android:textColor="#000000"
                 android:textSize="14sp" />
-
             <!-- Date & Time -->
             <TextView
                 android:layout_width="match_parent"
@@ -155,7 +141,6 @@
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:id="@+id/startTiming"
                 android:layout_width="match_parent"
@@ -171,7 +156,6 @@
                 android:text="To: endDate • endTime"
                 android:textColor="#000000"
                 android:textSize="14sp" />
-
             <!-- Seats -->
             <TextView
                 android:layout_width="match_parent"
@@ -181,7 +165,6 @@
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:id="@+id/seats"
                 android:layout_width="match_parent"
@@ -190,7 +173,6 @@
                 android:text="0 seats"
                 android:textColor="#000000"
                 android:textSize="14sp" />
-
             <!-- Location -->
             <TextView
                 android:layout_width="match_parent"
@@ -200,7 +182,6 @@
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:id="@+id/eventLocation"
                 android:layout_width="match_parent"
@@ -216,7 +197,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="8dp" />
-
             <!-- Links -->
             <TextView
                 android:layout_width="match_parent"
@@ -226,7 +206,6 @@
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:id="@+id/registrationLink"
                 android:layout_width="match_parent"
@@ -236,7 +215,6 @@
                 android:textStyle="bold"
                 android:textColor="#0000FF"
                 android:textSize="16sp" />
-
             <!-- Contacts -->
             <TextView
                 android:layout_width="match_parent"
@@ -246,7 +224,6 @@
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:id="@+id/organizerContacts"
                 android:layout_width="match_parent"
@@ -277,7 +254,6 @@
                 android:text="Email"
                 android:textColor="#000000"
                 android:textSize="14sp" />
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -286,35 +262,55 @@
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
             <!-- Organizer Image and Name goes Here -->
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
                 android:layout_marginTop="8dp">
 
                 <ImageView
                     android:id="@+id/organizerImage"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:layout_marginEnd="16dp" />
-
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
                 <TextView
                     android:id="@+id/organizerName"
-                    android:layout_width="wrap_content"
+                    android:layout_width="210dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
                     android:text="PETAKOM"
-                    android:gravity="center_horizontal"
                     android:textColor="#000000"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/organizerImage"
+                    app:layout_constraintTop_toTopOf="@+id/organizerImage"
+                    app:layout_constraintBottom_toBottomOf="@+id/organizerImage"/>
+                <TextView
+                    android:id="@+id/weekly_stats_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="4.7"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/organizerImage"
+                    app:layout_constraintEnd_toStartOf="@+id/imageView"
+                    app:layout_constraintTop_toTopOf="@+id/organizerImage" />
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_baseline_star_rate_24"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/organizerImage"
+                    app:layout_constraintBottom_toBottomOf="@+id/organizerImage"
+                    app:tint="#FFDF00" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </ScrollView>
-
     <!-- Register Event Button -->
     <RelativeLayout
         android:id="@+id/registerButtonContainer"
@@ -323,7 +319,6 @@
         android:layout_alignParentBottom="true"
         android:padding="16dp"
         android:background="#FFFFFF">
-
         <Button
             android:id="@+id/registerButton"
             android:layout_width="match_parent"

@@ -34,12 +34,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class RegisterEvent extends AppCompatActivity {
 
     private ImageView eventThumbnail, organizerImage;
     private TextView eventTitle, startDate, startTime, eventDetails, startTiming, endTiming, seats, eventLocation;
-    private TextView organizerContacts, organizerEmail, organizerName;
+    private TextView organizerContacts, organizerEmail, organizerName, ratings;
     private Button registerButton;
     private ImageButton backButton;
 
@@ -81,6 +82,7 @@ public class RegisterEvent extends AppCompatActivity {
         organizerEmail = findViewById(R.id.organizerEmail);
         organizerName = findViewById(R.id.organizerName);
         organizerImage = findViewById(R.id.organizerImage);
+        ratings = findViewById(R.id.weekly_stats_text);
         registerButton = findViewById(R.id.registerButton);
 
         backButton.setOnClickListener(v -> finish());
@@ -229,6 +231,30 @@ public class RegisterEvent extends AppCompatActivity {
                             .placeholder(R.drawable.ic_baseline_error_24)
                             .error(R.drawable.ic_baseline_error_24)
                             .into(organizerImage);
+
+                    // Calculate average rating from feedbacks
+                    DataSnapshot feedbacksSnapshot = snapshot.child("feedbacks");
+                    if (feedbacksSnapshot.exists()) {
+                        int totalRatings = 0;
+                        int feedbackCount = 0;
+
+                        for (DataSnapshot feedback : feedbacksSnapshot.getChildren()) {
+                            Integer rating = feedback.child("ratings").getValue(Integer.class);
+                            if (rating != null) {
+                                totalRatings += rating;
+                                feedbackCount++;
+                            }
+                        }
+
+                        if (feedbackCount > 0) {
+                            float averageRating = (float) totalRatings / feedbackCount;
+                            ratings.setText(String.format(Locale.getDefault(), "%.1f (%d)", averageRating, feedbackCount));
+                        } else {
+                            ratings.setText("0.0 (0)");
+                        }
+                    } else {
+                        ratings.setText("0.0 (0)");
+                    }
                 } else {
                     Toast.makeText(RegisterEvent.this, "Organizer not found!", Toast.LENGTH_SHORT).show();
                 }

@@ -173,7 +173,7 @@ public class PastActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             dialog.dismiss(); // Close the dialog
             finish();         // Close the activity
-        }, 3000); // Delay time: 1 seconds
+        }, 1500); // Delay time: 1 seconds
     }
     private void checkExistingFeedback() {
         // Step 3: Check if logged-in user already submitted feedback

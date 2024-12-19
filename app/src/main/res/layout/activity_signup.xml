@@ -137,7 +137,7 @@
             android:layout_height="wrap_content"
             android:text="Signing up means that you have read and agreed to ChupEvent User Agreement and Privacy Policy"
             android:textColor="#A9A9A9"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="16dp"/>
 
         <!-- Sign In Link -->
         <TextView
