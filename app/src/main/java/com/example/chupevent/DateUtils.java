@@ -55,4 +55,14 @@ public class DateUtils {
             return false;
         }
     }
+
+    public static boolean isInFuture(String date, String time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+        try {
+            Date eventDateTime = sdf.parse(date + " " + time);
+            return eventDateTime != null && eventDateTime.after(new Date());
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

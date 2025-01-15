@@ -1,64 +1,111 @@
 package com.example.chupevent;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.database.*;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class HomeFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private RecyclerView recyclerViewExploreEvents, recyclerViewAdvertisement;
+    private HomeAdapter exploreEventsAdapter, advertisementAdapter;
+    private List<Event> exploreEventsList = new ArrayList<>();
+    private List<Integer> advertisementImages = new ArrayList<>();
+    private Handler advertisementHandler = new Handler(Looper.getMainLooper());
+    private int advertisementIndex = 0;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-    public HomeFragment() {
-        // Required empty public constructor
+        recyclerViewExploreEvents = view.findViewById(R.id.recyclerViewExploreEvents);
+        recyclerViewAdvertisement = view.findViewById(R.id.recyclerViewAdvertisement);
+
+        setupExploreEventsRecyclerView();
+        setupAdvertisementRecyclerView();
+
+        loadExploreEvents();
+        loadAdvertisementImages();
+
+        return view;
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    private void setupExploreEventsRecyclerView() {
+        recyclerViewExploreEvents.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        exploreEventsAdapter = new HomeAdapter(exploreEventsList, true, eventId -> {
+            Intent intent = new Intent(getActivity(), RegisterEvent.class);
+            intent.putExtra("eventId", eventId);
+            startActivity(intent);
+        });
+        recyclerViewExploreEvents.setAdapter(exploreEventsAdapter);
+    }
+
+    private void setupAdvertisementRecyclerView() {
+        recyclerViewAdvertisement.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        advertisementAdapter = new HomeAdapter(advertisementImages, false, null);
+        recyclerViewAdvertisement.setAdapter(advertisementAdapter);
+
+        startAdvertisementAutoScroll();
+    }
+
+    private void loadExploreEvents() {
+        DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference("Events");
+        eventsRef.orderByChild("status").equalTo("Approved").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                exploreEventsList.clear();
+                for (DataSnapshot eventSnapshot : snapshot.getChildren()) {
+                    Event event = eventSnapshot.getValue(Event.class);
+                    if (event != null && DateUtils.isInFuture(event.getStartDate(), event.getStartTime())) {
+                        exploreEventsList.add(event);
+                    }
+                }
+                exploreEventsAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle error
+            }
+        });
+    }
+
+    private void loadAdvertisementImages() {
+        advertisementImages.clear();
+        advertisementImages.add(R.drawable.ads1);
+        advertisementImages.add(R.drawable.ads2);
+        advertisementImages.add(R.drawable.ads3);
+        advertisementImages.add(R.drawable.ads4);
+        advertisementAdapter.notifyDataSetChanged();
+    }
+
+    private void startAdvertisementAutoScroll() {
+        advertisementHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (advertisementAdapter.getItemCount() > 0) {
+                    advertisementIndex = (advertisementIndex + 1) % advertisementAdapter.getItemCount();
+                    recyclerViewAdvertisement.smoothScrollToPosition(advertisementIndex);
+                }
+                advertisementHandler.postDelayed(this, 3000);
+            }
+        }, 3000);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+    public void onDestroyView() {
+        super.onDestroyView();
+        advertisementHandler.removeCallbacksAndMessages(null);
     }
 }
